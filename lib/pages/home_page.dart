@@ -105,6 +105,10 @@ class _HomePageState extends State<HomePage> with RouteAware {
         }
       }
     } catch (error) {
+      if (!mounted) {
+        return;
+      }
+
       if (_postPagingController != null) _postPagingController.error = error;
     }
   }
@@ -216,11 +220,12 @@ class _HomePageState extends State<HomePage> with RouteAware {
           if (theProfile != null) {
             extProfiles.add(theProfile);
           }
-
-          // highlightedExtProfile = theProfile;
-          setState(() {
-            isExtProfileLoading = false;
-          });
+          if (mounted) {
+            // highlightedExtProfile = theProfile;
+            setState(() {
+              isExtProfileLoading = false;
+            });
+          }
           // setState(() {});
         });
       }
@@ -316,7 +321,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
     //     .notifyPageRequestListeners("");
     // _profilePagingController
     //     .notifyPageRequestListeners("");
-    super.didChangeDependencies();
 
     routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
 
@@ -379,6 +383,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
     // _profilePageController.nextPage(
     //     duration: Duration(milliseconds: 500), curve: ElasticInCurve());
     setState(() {});
+    super.didChangeDependencies();
   }
 
   @override
@@ -482,7 +487,8 @@ class _HomePageState extends State<HomePage> with RouteAware {
                             child: CardWithActions(
                               locationRow: Flex(
                                 direction: Axis.horizontal,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     flex: 2,
@@ -636,7 +642,8 @@ class _HomePageState extends State<HomePage> with RouteAware {
                                   'view-post-while-highlighted-pressed',
                                   {"highlightedPostId": theItem.id}).then((x) {
                                 if (theItem.id != null) {
-                                  GoRouter.of(context).go('/post/${theItem.id}');
+                                  GoRouter.of(context)
+                                      .go('/post/${theItem.id}');
 
                                   // Navigator.pushNamed(context, '/post',
                                   //     arguments: {"id": theItem.id});
@@ -652,7 +659,9 @@ class _HomePageState extends State<HomePage> with RouteAware {
                                 cancelHomeScreenTimers();
                                 await analyticsController?.sendAnalyticsEvent(
                                     'view-all-posts-while-highlighted-pressed',
-                                    {"highlightedPostId": theItem.id}).then((x) {
+                                    {
+                                      "highlightedPostId": theItem.id
+                                    }).then((x) {
                                   GoRouter.of(context).go('/postsPage');
 
                                   // Navigator.pushNamed(context, '/postsPage');
@@ -680,7 +689,9 @@ class _HomePageState extends State<HomePage> with RouteAware {
                                 cancelHomeScreenTimers();
                                 await analyticsController?.sendAnalyticsEvent(
                                     'view-all-posts-while-highlighted-pressed',
-                                    {"highlightedPostId": theItem.id}).then((x) {
+                                    {
+                                      "highlightedPostId": theItem.id
+                                    }).then((x) {
                                   GoRouter.of(context).go('/postsPage');
 
                                   // Navigator.pushNamed(context, '/postsPage');
@@ -707,11 +718,11 @@ class _HomePageState extends State<HomePage> with RouteAware {
                                 !isPostLoading && (theItem == null)
                                     ? const Text("No Posts with images")
                                     : Column(
-                                  children: [
-                                    LoadingLogo(),
-                                    Text("Loading Post Previews")
-                                  ],
-                                ),
+                                        children: [
+                                          LoadingLogo(),
+                                          Text("Loading Post Previews")
+                                        ],
+                                      ),
                               ],
                             ),
                           );

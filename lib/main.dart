@@ -6,6 +6,7 @@ import 'package:cookowt/models/controllers/auth_controller.dart';
 import 'package:cookowt/models/controllers/chat_controller.dart';
 import 'package:cookowt/models/controllers/geolocation_controller.dart';
 import 'package:cookowt/models/controllers/post_controller.dart';
+import 'package:cookowt/pages/hashtag_library_page.dart';
 import 'package:cookowt/pages/hashtag_page.dart';
 import 'package:cookowt/pages/home_page.dart';
 import 'package:cookowt/pages/logout_page.dart';
@@ -119,23 +120,23 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
         path: '/profilesPage',
         builder: (BuildContext context, GoRouterState state) {
-          return const BugReporter(child: ProfilesPage());
+          return ProfilesPage();
         },
       ),
       GoRoute(
         path: '/splash',
         builder: (BuildContext context, GoRouterState state) {
-          return const BugReporter(child: SplashPage());
+          return SplashPage();
         },
       ),
       GoRoute(
           path: '/home',
           builder: (BuildContext context, GoRouterState state) =>
-              const BugReporter(child: HomePage())),
+              HomePage()),
       GoRoute(
           path: '/postsPage',
           builder: (BuildContext context, GoRouterState state) =>
-              const BugReporter(child: PostsPage())),
+              PostsPage()),
       // GoRoute(
       //     path: '/createPostsPage',
       //     builder: (BuildContext context, GoRouterState state) =>
@@ -143,40 +144,40 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
           path: '/register',
           builder: (BuildContext context, GoRouterState state) =>
-              const BugReporter(child: RegisterPage())),
+              RegisterPage()),
       GoRoute(
           path: '/settings',
           builder: (BuildContext context, GoRouterState state) =>
-              const BugReporter(child: SettingsPage())),
+              SettingsPage()),
       GoRoute(
           path: '/post/:id',
-          builder: (BuildContext context, GoRouterState state) => BugReporter(
-              child: SoloPostPage(
+          builder: (BuildContext context, GoRouterState state) => SoloPostPage(
                 thisPostId: state.params["id"],
-              ))),
+              )),
       GoRoute(
           path: '/profile/:id',
           builder: (BuildContext context, GoRouterState state) {
-            return BugReporter(
-                child: SoloProfilePage(
-                  id: state.params["id"]!,
-                ));
+            return SoloProfilePage(
+              id: state.params["id"]!,
+            );
           }),
-    GoRoute(
+      GoRoute(
           path: '/myProfile',
           builder: (BuildContext context, GoRouterState state) {
-            return BugReporter(
-                child: SoloProfilePage(
-                  id: FirebaseAuth.instance.currentUser?.uid ?? "",
-                ));
+            return SoloProfilePage(
+              id: FirebaseAuth.instance.currentUser?.uid ?? "",
+            );
           }),
       GoRoute(
           path: '/hashtag/:id',
-          builder: (BuildContext context, GoRouterState state) => BugReporter(
-              child: HashtagPage(
+          builder: (BuildContext context, GoRouterState state) => HashtagPage(
                 key: Key(state.params["id"]!),
                 thisHashtagId: state.params["id"],
-              ))),
+              )),
+      GoRoute(
+          path: '/hashtagCollections',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HashtagLibraryPage()),
     ],
   );
 
@@ -214,8 +215,6 @@ class _MyAppState extends State<MyApp> {
         analyticsController.setUserId(user.uid);
       }
     });
-
-
   }
 
   @override
@@ -229,7 +228,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void didChangeDependencies() async {
     // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
 
     // var intermediate =
     //     AuthInherited.of(context)?.authController?.isLoggedIn ?? false;
@@ -251,6 +249,7 @@ class _MyAppState extends State<MyApp> {
     // }
 
     setState(() {});
+    super.didChangeDependencies();
   }
 
   // This widget is the root of your application.
