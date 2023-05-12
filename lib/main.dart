@@ -1,11 +1,18 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cookowt/config/default_config.dart';
 import 'package:cookowt/models/controllers/analytics_controller.dart';
 import 'package:cookowt/models/controllers/auth_controller.dart';
 import 'package:cookowt/models/controllers/chat_controller.dart';
 import 'package:cookowt/models/controllers/geolocation_controller.dart';
 import 'package:cookowt/models/controllers/post_controller.dart';
+import 'package:cookowt/pages/chapter_roster_page.dart';
 import 'package:cookowt/pages/hashtag_library_page.dart';
 import 'package:cookowt/pages/hashtag_page.dart';
 import 'package:cookowt/pages/home_page.dart';
@@ -17,16 +24,7 @@ import 'package:cookowt/pages/settings_page.dart';
 import 'package:cookowt/pages/solo_post_page.dart';
 import 'package:cookowt/pages/solo_profile_page.dart';
 import 'package:cookowt/pages/splash_screen.dart';
-import 'package:cookowt/shared_components/bug_reporter/bug_reporter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
-import 'package:go_router/go_router.dart';
 import 'package:meta_seo/meta_seo.dart';
-import 'package:universal_io/io.dart';
 
 import 'config/firebase_options.dart';
 import 'models/controllers/auth_inherited.dart';
@@ -79,13 +77,13 @@ class _MyAppState extends State<MyApp> {
   late GoRouter router = GoRouter(
     redirect: (BuildContext context, GoRouterState state) {
       // print("GO_ROUTER ${state.location} ${state.subloc}");
-      if (state.subloc == '/register' || state.subloc == '/splash') {
+      if (state.location == '/register' || state.location == '/splash') {
         return null;
       }
 
       // if the user is not logged in, they need to login
       final loggedIn = FirebaseAuth.instance.currentUser != null;
-      final loggingIn = state.subloc == '/login';
+      final loggingIn = state.location == '/login';
 
       // print("loggedIn ${loggedIn} loggingIn ${loggingIn}");
 
@@ -152,13 +150,13 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
           path: '/post/:id',
           builder: (BuildContext context, GoRouterState state) => SoloPostPage(
-                thisPostId: state.params["id"],
+                thisPostId: state.pathParameters["id"],
               )),
       GoRoute(
           path: '/profile/:id',
           builder: (BuildContext context, GoRouterState state) {
             return SoloProfilePage(
-              id: state.params["id"]!,
+              id: state.pathParameters["id"]!,
             );
           }),
       GoRoute(
@@ -171,13 +169,17 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
           path: '/hashtag/:id',
           builder: (BuildContext context, GoRouterState state) => HashtagPage(
-                key: Key(state.params["id"]!),
-                thisHashtagId: state.params["id"],
+                key: Key(state.pathParameters["id"]!),
+                thisHashtagId: state.pathParameters["id"],
               )),
       GoRoute(
           path: '/hashtagCollections',
           builder: (BuildContext context, GoRouterState state) =>
               const HashtagLibraryPage()),
+    GoRoute(
+          path: '/chapterRoster',
+          builder: (BuildContext context, GoRouterState state) =>
+              const ChapterRosterPage()),
     ],
   );
 
@@ -288,11 +290,11 @@ class _MyAppState extends State<MyApp> {
         //       // Define MetaSEO object
         //       MetaSEO meta = MetaSEO();
         //       // add meta seo data for web app as you want
-        //       var title = 'Cookowt-The Invite Only Network';
+        //       var title = 'Kookout-The Invite Only Network';
         //       var image =
         //           "https://cdn.sanity.io/images/dhhk6mar/production/ae5b21a6e5982153e74ca8a815b90f92368ac9fa-3125x1875.png";
         //       var description =
-        //           'Cookowt is the next invite only social media app. Invite only means real users unless they are admitted by someone already at the Cookowt. You will be able to link to other Social media to enable cross posting for those not invited. Want the invite? tweet @Cookowtinvitee';
+        //           'Kookout is the next invite only social media app. Invite only means real users unless they are admitted by someone already at the Kookout. You will be able to link to other Social media to enable cross posting for those not invited. Want the invite? tweet @Kookoutinvitee';
         //       meta.ogTitle(ogTitle: title);
         //       meta.description(description: description);
         //       meta.keywords(keywords: 'social media, black twitter, memes');

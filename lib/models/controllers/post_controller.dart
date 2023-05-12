@@ -142,10 +142,12 @@ class PostController {
 
       // }
 
-      await request.send();
-      // if (kDebugMode) {
-      //   print("post controller api response$response");
-      // }
+      var theResponse = await request.send();
+      if (kDebugMode) {
+        print("post controller api response$theResponse");
+      }
+
+
 
       return "SUCCESS";
     } else {
