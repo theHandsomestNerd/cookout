@@ -16,7 +16,6 @@ class CardWithBackground extends StatelessWidget {
   final double? height;
   final ImageProvider? image;
 
-
   // "https://placeimg.com/640/480/any"
   @override
   Widget build(BuildContext context) {
@@ -30,15 +29,14 @@ class CardWithBackground extends StatelessWidget {
             //set border radius more than 50% of height and width to make circle
           ),
       child: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: image ?? const Image(
-              image: AssetImage(
-                  'assets/blankProfileImage.png'),
-            ).image,
-            fit: BoxFit.cover,
-            alignment: Alignment.topCenter,
-          )),
+          decoration: image != null
+              ? BoxDecoration(
+                  image: DecorationImage(
+                  image: image!,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                ))
+              : null,
           child: child),
     );
   }

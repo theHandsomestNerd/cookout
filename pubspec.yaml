@@ -1,5 +1,5 @@
 name: cookowt
-description: Cookowt is the next invite only social media app. Invite only means real users unless they are admitted by someone already at the Cookowt. You will be able to link to other Social media to enable cross posting for those not invited. Want the invite? tweet @Cookowtinvitee
+description: Kookout is the next invite only social media app. Invite only means real users unless they are admitted by someone already at the Kookout. You will be able to link to other Social media to enable cross posting for those not invited. Want the invite? tweet @Kookoutinvitee
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -7,7 +7,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
+# Both the version and the builder number may be overrveridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # In Android, build-name is used as versionName while build-number used as versionCode.
 # Read more about Android versioning at https://developer.android.com/studio/publish/versioning
@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+63
+version: 1.0.0+82
 
 environment:
   sdk: '>=2.19.2 <3.0.0'
@@ -37,7 +37,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   geolocator: ^9.0.2
   firebase_core: ^2.7.1
-  firebase_auth: ^4.2.10
   http: ^0.13.5
   flutter_sanity_image_url: ^0.0.3
   image_picker: ^0.8.7
@@ -63,9 +62,13 @@ dependencies:
   image_cropper: ^3.0.2
   dotted_border: ^2.0.0+3
   url_strategy: ^0.2.0
-  go_router: ^6.5.7
+  go_router: ^7.0.0
   collection: ^1.17.0
+  phone_form_field: ^7.0.6
+  pluto_grid: ^5.4.9
   hashtagable: ^2.1.0
+  firebase_auth: ^4.2.2
+  cached_network_image: ^3.2.3
 
 dev_dependencies:
   flutter_test:

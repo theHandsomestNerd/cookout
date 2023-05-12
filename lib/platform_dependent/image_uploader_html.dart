@@ -12,6 +12,7 @@ import 'image_uploader_abstract.dart';
 
 class ImageUploaderImpl extends ImageUploader {
   ImageUploaderImpl() {
+    files = null;
     file = null;
     fileExtension = null;
     contentType = null;
@@ -20,7 +21,7 @@ class ImageUploaderImpl extends ImageUploader {
 
   @override
   void clear() {
-    file = null;
+    files = null;
     notifyListeners();
   }
 
@@ -35,7 +36,7 @@ class ImageUploaderImpl extends ImageUploader {
   // }
 
   Widget _imageCard(
-      BuildContext context, double screenWidth, double screenHeight) {
+      BuildContext context, double screenWidth, double screenHeight, image) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -48,7 +49,7 @@ class ImageUploaderImpl extends ImageUploader {
               elevation: 4.0,
               child: Padding(
                 padding: const EdgeInsets.all(kIsWeb ? 24.0 : 16.0),
-                child: _image(screenWidth, screenHeight),
+                child: _image(screenWidth, screenHeight, image),
               ),
             ),
           ),
@@ -137,9 +138,9 @@ class ImageUploaderImpl extends ImageUploader {
   }
 
   Future<void> _cropImage(context) async {
-    if (file != null && file?.path != null) {
+    if (files?[0] != null && files?[0]?.path != null) {
       final theCroppedFile = await ImageCropper().cropImage(
-        sourcePath: file!.path,
+        sourcePath: files![0]!.path,
         compressFormat: ImageCompressFormat.jpg,
         compressQuality: 100,
         uiSettings: [
@@ -159,8 +160,8 @@ class ImageUploaderImpl extends ImageUploader {
               width: 350,
               height: 350,
             ),
-            viewPort:
-                const CroppieViewPort(width: 340, height: 340, type: 'rectangle'),
+            viewPort: const CroppieViewPort(
+                width: 340, height: 340, type: 'rectangle'),
             enableExif: true,
             enableZoom: true,
             showZoomer: true,
@@ -173,6 +174,7 @@ class ImageUploaderImpl extends ImageUploader {
       }
     }
   }
+
   //
   // void _clear() {
   //   file = null;
@@ -180,12 +182,12 @@ class ImageUploaderImpl extends ImageUploader {
   // }
 
   Future<void> _uploadImage() async {
-    final pickedFile = await uploadImage();
+    await uploadImage();
 
-    if (pickedFile != null) {
-      file = pickedFile;
-      notifyListeners();
-    }
+    // if (pickedFile != null) {
+    //   file = pickedFile;
+    //   notifyListeners();
+    // }
   }
 
   Widget _menu(context) {
@@ -219,18 +221,27 @@ class ImageUploaderImpl extends ImageUploader {
   @override
   Widget body(context, double screenWidth, double screenHeight,
       ImageProvider? inputImage) {
-    if (croppedFile != null || file != null) {
-      return _imageCard(
-        context,
-        screenWidth,
-        screenHeight,
+    if (files != null && (files?.length ?? -1) > 0) {
+      return Column(
+        children: files?.map((e) {
+              if (croppedFile != null || e != null) {
+                return _imageCard(context, screenWidth, screenHeight, e);
+              } else {
+                return _uploaderCard(context, inputImage);
+              }
+            }).toList() ??
+            [],
       );
     } else {
-      return _uploaderCard(context, inputImage);
+      if (croppedFile != null || file != null) {
+        return _imageCard(context, screenWidth, screenHeight, file);
+      } else {
+        return _uploaderCard(context, inputImage);
+      }
     }
   }
 
-  Widget _image(double screenWidth, double screenHeight) {
+  Widget _image(double screenWidth, double screenHeight, XFile? imageFile) {
     if (croppedFile != null) {
       final path = croppedFile!.path;
       return ConstrainedBox(
@@ -240,8 +251,8 @@ class ImageUploaderImpl extends ImageUploader {
         ),
         child: kIsWeb ? Image.network(path) : Image.file(File(path)),
       );
-    } else if (file != null) {
-      final path = file!.path;
+    } else if (imageFile != null) {
+      final path = imageFile.path;
       return ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: 0.8 * screenWidth,
@@ -256,27 +267,57 @@ class ImageUploaderImpl extends ImageUploader {
 
   @override
   Future<XFile?> uploadImage() async {
-    final XFile? pickedImageFile = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 100,
-        maxWidth: 580,
-        preferredCameraDevice: CameraDevice.rear);
+    final List<XFile>? pickedImageFiles = await ImagePicker().pickMultiImage(
+      // source: ImageSource.gallery,
+      requestFullMetadata: true,
+      imageQuality: 100,
+      maxWidth: 580,
+      // preferredCameraDevice: CameraDevice.rear,
+    );
 
-    XFile? theFile;
-    if (pickedImageFile != null) {
-      theFile = XFile(pickedImageFile.path,
-          bytes: await pickedImageFile.readAsBytes(),
-          name: pickedImageFile.name,
-          length: await pickedImageFile.length());
+    if ((pickedImageFiles?.length ?? -1) > 0) {
+      processFile(XFile pickedImageFile) async {
+        XFile? theFile;
+        if (pickedImageFile != null) {
+          theFile = XFile(pickedImageFile.path,
+              bytes: await pickedImageFile.readAsBytes(),
+              name: pickedImageFile.name,
+              length: await pickedImageFile.length());
 
-      file = theFile;
-      notifyListeners();
+          files?.add(theFile);
+          notifyListeners();
 
-      if (kDebugMode) {
-        print(
-            "File Picked ${theFile.name} extension:${theFile.mimeType} ${theFile.length()} bytes");
+          if (kDebugMode) {
+            print(
+                "File Picked ${theFile.name} extension:${theFile.mimeType} ${theFile.length()} bytes");
+          }
+          return theFile;
+        }
       }
-      return theFile;
+
+      List<XFile> processedFiles = [];
+
+      doProcess(element) async {
+        var aFile = await processFile(element);
+
+        if (aFile != null) {
+          processedFiles.add(aFile);
+          return aFile;
+        }
+        return null;
+      }
+
+      List<XFile?> realizedFutures =
+          await Future.wait(pickedImageFiles?.map((element) {
+                return doProcess(element).then((val) {
+                  return val;
+                });
+              }) ??
+              []);
+      files = realizedFutures;
+      file = realizedFutures[0];
+      notifyListeners();
+      return realizedFutures[0];
     } else {
       // User canceled the picker
     }

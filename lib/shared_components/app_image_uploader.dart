@@ -31,21 +31,13 @@ class AppImageUploader extends StatefulWidget {
 class _AppImageUploaderState extends State<AppImageUploader> {
   @override
   Widget build(BuildContext context) {
-    return Flex(
-      mainAxisSize: MainAxisSize.min,
-      direction: Axis.horizontal,
-      children: [
-        Flexible(
-          flex: 1,
-          fit: FlexFit.loose,
-          child: widget.imageUploader.body(
-            context,
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height,
-            widget.image
-          ),
-        ),
-      ],
+    return SingleChildScrollView(
+      child: widget.imageUploader.body(
+        context,
+        widget.width ?? 350,
+        widget.height ?? 350,
+        widget.image,
+      ),
     );
   }
 }

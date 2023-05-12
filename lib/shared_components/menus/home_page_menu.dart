@@ -86,6 +86,20 @@ class _HomePageMenuState extends State<HomePageMenu> {
         //   icon: const Icon(Icons.people),
         // ),
         ActionButton(
+          tooltip: "Hashtags",
+          onPressed: () {
+            GoRouter.of(context).go('/hashtagCollections');
+          },
+          icon: const Icon(Icons.tag),
+        ),
+        ActionButton(
+          tooltip: "Chapter Roster",
+          onPressed: () {
+            GoRouter.of(context).go('/chapterRoster');
+          },
+          icon: const Icon(Icons.list),
+        ),
+        ActionButton(
           tooltip: "Profiles",
           onPressed: () {
             GoRouter.of(context).go('/profilesPage');

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cookowt/models/hash_tag_collection.dart';
 import 'package:cookowt/models/position.dart';
 import 'package:cookowt/models/responses/chat_api_get_profile_posts_response.dart';
@@ -9,10 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hashtagable/functions.dart';
 import 'package:http/http.dart' as http;
+import 'package:cookowt/models/responses/chat_api_get_verifications_response.dart';
+import 'package:cookowt/models/spreadsheet_member.dart';
+import 'package:cookowt/models/spreadsheet_member_verification.dart';
 
 import '../../config/default_config.dart';
 import '../app_user.dart';
 import '../block.dart';
+import '../chapter_roster.dart';
 import '../comment.dart';
 import '../extended_profile.dart';
 import '../follow.dart';
@@ -230,6 +233,39 @@ class ApiClient {
     return <Post>[];
   }
 
+  Future<ChatApiGetVerificationsResponse?> fetchVerificationStatuses() async {
+    if (kDebugMode) {
+      print(
+          "Retrieving verification statuses");
+    }
+    String? token = await getIdToken();
+    if (DefaultConfig.theAuthBaseUrl == "") {
+      if (kDebugMode) {
+        print(
+            "Retrieving verification statuses authBaseUrl empty ${DefaultConfig.theAuthBaseUrl}");
+      }
+      return null;
+    }
+
+    if (token != null && DefaultConfig.theAuthBaseUrl != "") {
+      final response = await http.get(
+          Uri.parse(
+              "${DefaultConfig.theAuthBaseUrl}/get-verifications"),
+          headers: {"Authorization": ("Bearer $token")});
+
+      dynamic processedResponse = jsonDecode(response.body);
+      // print("hashtagged posts retrieved ${processedResponse}");
+      if (processedResponse != null &&
+          processedResponse != "null") {
+        ChatApiGetVerificationsResponse responseModelList =
+        ChatApiGetVerificationsResponse.fromJson(processedResponse);
+
+        return responseModelList;
+      }
+    }
+    return null;
+  }
+
   Future<HashtagCollection?> fetchHashtagCollection(
       String? hashtagCollectionSlug) async {
     if (kDebugMode) {
@@ -262,6 +298,39 @@ class ApiClient {
     }
     return null;
   }
+
+  Future<List<SpreadsheetMember>?> fetchChapterRoster() async {
+    if (kDebugMode) {
+      print("Retrieving chapter Roster");
+    }
+    String? token = await getIdToken();
+    if (DefaultConfig.theAuthBaseUrl == "") {
+      if (kDebugMode) {
+        print(
+            "Retrieving chapter roster authBaseUrl empty ${DefaultConfig.theAuthBaseUrl}");
+      }
+      return null;
+    }
+
+    if (token != null && DefaultConfig.theAuthBaseUrl != "") {
+      final response = await http.get(
+          Uri.parse(
+              "${DefaultConfig.theAuthBaseUrl}/get-chapter-roster"),
+          headers: {"Authorization": ("Bearer $token")});
+
+      dynamic processedResponse = jsonDecode(response.body);
+
+      if (processedResponse['chapterRoster'] != null &&
+          processedResponse['chapterRoster'] != "null") {
+        ChapterRoster responseModelList =
+        ChapterRoster.fromJson(processedResponse['chapterRoster']);
+
+        return responseModelList.theMembers;
+      }
+    }
+    return null;
+  }
+
 
   Future<List<Comment>> fetchCommentThreadPaginatedForPost(
       String? postId, String? lastId, int pageSize) async {
@@ -581,52 +650,6 @@ class ApiClient {
       if (newProfile.height != null) {
         body = {...body, "height": json.encode(newProfile.height)};
       }
-      if (newProfile.facebook != null && newProfile.facebook != "null") {
-        body = {...body, "facebook": newProfile.facebook};
-      }
-      if (newProfile.twitter != null && newProfile.twitter != "null") {
-        body = {...body, "twitter": newProfile.twitter};
-      }
-      if (newProfile.instagram != null && newProfile.instagram != "null") {
-        body = {...body, "instagram": newProfile.instagram};
-      }
-      if (newProfile.gender != null && newProfile.gender != "null") {
-        body = {...body, "gender": newProfile.gender};
-      }
-      if (newProfile.partnerStatus != null &&
-          newProfile.partnerStatus != "null") {
-        body = {...body, "partnerStatus": newProfile.partnerStatus};
-      }
-      if (newProfile.ethnicity != null && newProfile.ethnicity != "null") {
-        body = {...body, "ethnicity": newProfile.ethnicity};
-      }
-      if (newProfile.iAm != null && newProfile.iAm != "null") {
-        body = {...body, "iAm": newProfile.iAm};
-      }
-      if (newProfile.imInto != null && newProfile.imInto != "null") {
-        body = {...body, "imInto": newProfile.imInto};
-      }
-      if (newProfile.imOpenTo != null && newProfile.imOpenTo != "null") {
-        body = {...body, "imOpenTo": newProfile.imOpenTo};
-      }
-      if (newProfile.whatIDo != null && newProfile.whatIDo != "null") {
-        body = {...body, "whatIDo": newProfile.whatIDo};
-      }
-      if (newProfile.whatImLookingFor != null &&
-          newProfile.whatImLookingFor != "null") {
-        body = {...body, "whatImLookingFor": newProfile.whatImLookingFor};
-      }
-      if (newProfile.whatInterestsMe != null &&
-          newProfile.whatInterestsMe != "null") {
-        body = {...body, "whatInterestsMe": newProfile.whatInterestsMe};
-      }
-      if (newProfile.whereILive != null && newProfile.whereILive != "null") {
-        body = {...body, "whereILive": newProfile.whereILive};
-      }
-      if (newProfile.sexPreferences != null &&
-          newProfile.sexPreferences != "null") {
-        body = {...body, "sexPreferences": newProfile.sexPreferences};
-      }
 
       if (kDebugMode) {
         print("the update ext profile request $body");
@@ -919,6 +942,40 @@ class ApiClient {
           print(processedResponse['likeStatus']);
         }
         String responseModel = processedResponse['likeStatus'];
+        if (kDebugMode) {
+          print("$message status: $responseModel");
+        }
+        return responseModel;
+      } else {
+        return "FAIL";
+      }
+    }
+    return "FAIL";
+  }
+Future<String> createVerification(String rosterId) async {
+    var message = "Create Verification $rosterId";
+    if (kDebugMode) {
+      print(message);
+    }
+
+    String? token = await getIdToken();
+    if (token != null && DefaultConfig.theAuthBaseUrl != "") {
+      final response = await http.post(
+          Uri.parse("${DefaultConfig.theAuthBaseUrl}/create-verification"),
+          body: {
+            "rosterId": rosterId,
+          },
+          headers: {
+            "Authorization": ("Bearer $token")
+          });
+
+      dynamic processedResponse = jsonDecode(response.body);
+
+      if (processedResponse['verificationStatus'] != null) {
+        if (kDebugMode) {
+          print(processedResponse['verificationStatus']);
+        }
+        String responseModel = processedResponse['verificationStatus'];
         if (kDebugMode) {
           print("$message status: $responseModel");
         }
