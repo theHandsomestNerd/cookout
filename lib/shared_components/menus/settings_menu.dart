@@ -37,13 +37,13 @@ class _SettingsPageMenuState extends State<SettingsPageMenu> {
           },
           icon: const Icon(Icons.tag),
         ),
-        ActionButton(
-          tooltip: "Chapter Roster",
-          onPressed: () {
-            GoRouter.of(context).go('/chapterRoster');
-          },
-          icon: const Icon(Icons.list),
-        ),
+        // ActionButton(
+        //   tooltip: "Chapter Roster",
+        //   onPressed: () {
+        //     GoRouter.of(context).go('/chapterRoster');
+        //   },
+        //   icon: const Icon(Icons.list),
+        // ),
         ActionButton(
           tooltip: "Edit Profile",
           onPressed: () {

@@ -52,6 +52,16 @@ class _LoginMenuState extends State<LoginMenu> {
           ),
         if (myAppUser != null)
           ActionButton(
+            tooltip: "Hashtags",
+            onPressed: () {
+              GoRouter.of(context).go('/hashtagCollections');
+
+              // Navigator.popAndPushNamed(context, '/postsPage');
+            },
+            icon: const Icon(Icons.tag),
+          ),
+        if (myAppUser != null)
+          ActionButton(
             tooltip: "Posts",
             onPressed: () {
               GoRouter.of(context).go('/postsPage');
