@@ -1,16 +1,10 @@
 import 'dart:convert';
-import 'package:cookowt/models/hash_tag_collection.dart';
-import 'package:cookowt/models/position.dart';
-import 'package:cookowt/models/responses/chat_api_get_profile_posts_response.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hashtagable/functions.dart';
 import 'package:http/http.dart' as http;
-import 'package:cookowt/models/responses/chat_api_get_verifications_response.dart';
-import 'package:cookowt/models/spreadsheet_member.dart';
-import 'package:cookowt/models/spreadsheet_member_verification.dart';
 
 import '../../config/default_config.dart';
 import '../app_user.dart';
@@ -19,14 +13,19 @@ import '../chapter_roster.dart';
 import '../comment.dart';
 import '../extended_profile.dart';
 import '../follow.dart';
+import '../hash_tag_collection.dart';
 import '../like.dart';
+import '../position.dart';
 import '../post.dart';
 import '../responses/auth_api_profile_list_response.dart';
 import '../responses/chat_api_get_profile_block_response.dart';
 import '../responses/chat_api_get_profile_comments_response.dart';
 import '../responses/chat_api_get_profile_follows_response.dart';
 import '../responses/chat_api_get_profile_likes_response.dart';
+import '../responses/chat_api_get_profile_posts_response.dart';
 import '../responses/chat_api_get_timeline_events_response.dart';
+import '../responses/chat_api_get_verifications_response.dart';
+import '../spreadsheet_member.dart';
 import '../timeline_event.dart';
 
 class ApiClient {
@@ -233,10 +232,55 @@ class ApiClient {
     return <Post>[];
   }
 
-  Future<ChatApiGetVerificationsResponse?> fetchVerificationStatuses() async {
+  Future<List<Post>> searchHashtags(
+      String? searchTerms, String? lastId, int? pageSize) async {
+    var thePageSize = pageSize;
+    if (thePageSize == null) {
+      thePageSize = 10;
+    }
+
     if (kDebugMode) {
       print(
-          "Retrieving verification statuses");
+          "Retrieving paginated hashtagged with ${searchTerms} Posts with lastid $lastId and pagesize $thePageSize");
+    }
+    String? token = await getIdToken();
+    if (DefaultConfig.theAuthBaseUrl == "") {
+      if (kDebugMode) {
+        print(
+            "paginated searching hashtagged posts authBaseUrl empty ${DefaultConfig.theAuthBaseUrl}");
+      }
+      return <Post>[];
+    }
+
+    if (token != null && DefaultConfig.theAuthBaseUrl != "") {
+      final response = await http.post(
+          Uri.parse(
+              "${DefaultConfig.theAuthBaseUrl}/search-hashtagged-posts-paginated"),
+          headers: {
+            "Authorization": ("Bearer $token")
+          },
+          body: {
+            "searchTerms": searchTerms,
+            "pageSize": thePageSize.toString(),
+            "lastId": lastId
+          });
+
+      dynamic processedResponse = jsonDecode(response.body);
+      print("search result posts retrieved ${processedResponse}");
+      if (processedResponse['posts'] != null &&
+          processedResponse['posts'] != "null") {
+        ChatApiGetProfilePostsResponse responseModelList =
+            ChatApiGetProfilePostsResponse.fromJson(processedResponse['posts']);
+
+        return responseModelList.list;
+      }
+    }
+    return <Post>[];
+  }
+
+  Future<ChatApiGetVerificationsResponse?> fetchVerificationStatuses() async {
+    if (kDebugMode) {
+      print("Retrieving verification statuses");
     }
     String? token = await getIdToken();
     if (DefaultConfig.theAuthBaseUrl == "") {
@@ -249,16 +293,14 @@ class ApiClient {
 
     if (token != null && DefaultConfig.theAuthBaseUrl != "") {
       final response = await http.get(
-          Uri.parse(
-              "${DefaultConfig.theAuthBaseUrl}/get-verifications"),
+          Uri.parse("${DefaultConfig.theAuthBaseUrl}/get-verifications"),
           headers: {"Authorization": ("Bearer $token")});
 
       dynamic processedResponse = jsonDecode(response.body);
       // print("hashtagged posts retrieved ${processedResponse}");
-      if (processedResponse != null &&
-          processedResponse != "null") {
+      if (processedResponse != null && processedResponse != "null") {
         ChatApiGetVerificationsResponse responseModelList =
-        ChatApiGetVerificationsResponse.fromJson(processedResponse);
+            ChatApiGetVerificationsResponse.fromJson(processedResponse);
 
         return responseModelList;
       }
@@ -314,8 +356,7 @@ class ApiClient {
 
     if (token != null && DefaultConfig.theAuthBaseUrl != "") {
       final response = await http.get(
-          Uri.parse(
-              "${DefaultConfig.theAuthBaseUrl}/get-chapter-roster"),
+          Uri.parse("${DefaultConfig.theAuthBaseUrl}/get-chapter-roster"),
           headers: {"Authorization": ("Bearer $token")});
 
       dynamic processedResponse = jsonDecode(response.body);
@@ -323,14 +364,13 @@ class ApiClient {
       if (processedResponse['chapterRoster'] != null &&
           processedResponse['chapterRoster'] != "null") {
         ChapterRoster responseModelList =
-        ChapterRoster.fromJson(processedResponse['chapterRoster']);
+            ChapterRoster.fromJson(processedResponse['chapterRoster']);
 
         return responseModelList.theMembers;
       }
     }
     return null;
   }
-
 
   Future<List<Comment>> fetchCommentThreadPaginatedForPost(
       String? postId, String? lastId, int pageSize) async {
@@ -952,7 +992,8 @@ class ApiClient {
     }
     return "FAIL";
   }
-Future<String> createVerification(String rosterId) async {
+
+  Future<String> createVerification(String rosterId) async {
     var message = "Create Verification $rosterId";
     if (kDebugMode) {
       print(message);

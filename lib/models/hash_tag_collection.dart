@@ -1,4 +1,3 @@
-
 import 'hash_tag.dart';
 
 class HashtagCollection {
