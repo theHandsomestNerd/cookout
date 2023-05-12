@@ -55,27 +55,16 @@ class _EditProfileTabState extends State<EditProfileTab> {
   String? _twitter;
   String? _instagram;
   String? _tiktok;
-  String? _govtIssuedFirstName;
-  String? _govtIssuedMiddleName;
-  String? _govtIssuedLastName;
-  String? _homePhone;
-  String? _workPhone;
-  String? _cellPhone;
+
   String? _ethnicity;
-  String? _occupation;
-  String? _address1;
-  String? _address2;
-  String? _city;
-  String? _state;
-  String? _zip;
-  String? _lineName;
-  String? _lineNumber;
-  String? _dopName;
-  String? _entireLinesName;
-  String? _otherChapterAffiliation;
-  DateTime? _crossingDate;
-  DateTime? _dob;
-  List<String>? _children;
+  String? _iAm;
+  String? _imInto;
+  String? _imOpenTo;
+  String? _whatIDo;
+  String? _whatImLookingFor;
+  String? _whatInterestsMe;
+  String? _whereILive;
+  String? _sexPreferences;
 
   bool isUpdating = false;
   SanityImage? profileImage;
@@ -157,37 +146,16 @@ class _EditProfileTabState extends State<EditProfileTab> {
         _facebook = aUser.facebook;
         _twitter = aUser.twitter;
         _instagram = aUser.instagram;
-        _tiktok = aUser.tiktok;
-        _govtIssuedFirstName = aUser.govtIssuedFirstName;
-        _govtIssuedMiddleName = aUser.govtIssuedMiddleName;
-        _govtIssuedLastName = aUser.govtIssuedLastName;
-        print("home ${aUser.homePhone?.replaceFirst("+1", "")}");
-        print("cell ${aUser.cellPhone?.replaceFirst("+1", "")}");
-        print("work ${aUser.workPhone?.replaceFirst("+1", "")}");
-        if (aUser.workPhone != null) {
-          _workPhone = aUser.workPhone?.replaceFirst("+1", "");
-        }
-        if (aUser.cellPhone != null) {
-          _cellPhone = aUser.cellPhone?.replaceFirst("+1", "");
-        }
-        if (aUser.homePhone != null) {
-          _homePhone = aUser.homePhone?.replaceFirst("+1", "");
-        }
+        _facebook = aUser.facebook;
         _ethnicity = aUser.ethnicity;
-        _occupation = aUser.occupation;
-        _address1 = aUser.address1;
-        _address2 = aUser.address2;
-        _city = aUser.city;
-        _state = aUser.state;
-        _zip = aUser.zip;
-        _lineName = aUser.lineName;
-        _lineNumber =
-            aUser.lineNumber != null ? aUser.lineNumber.toString() : null;
-        _dopName = aUser.dopName;
-        _entireLinesName = aUser.entireLinesName;
-        _otherChapterAffiliation = aUser.otherChapterAffiliation;
-        _crossingDate = aUser.crossingDate;
-        _dob = aUser.dob;
+        _iAm = aUser.iAm;
+        _imInto = aUser.imInto;
+        _imOpenTo = aUser.imOpenTo;
+        _whatIDo = aUser.whatIDo;
+        _whatImLookingFor = aUser.whatImLookingFor;
+        _whatInterestsMe = aUser.whatInterestsMe;
+        _whereILive = aUser.whereILive;
+        _sexPreferences = aUser.sexPreferences;
       }
       isUpdating = false;
     });
@@ -223,30 +191,18 @@ class _EditProfileTabState extends State<EditProfileTab> {
         longBio: _longBio,
         age: _age != null ? int.parse(_age!) : null,
         weight: _weight != null ? int.parse(_weight!) : null,
-        lineName: _lineName,
-        entireLinesName: _entireLinesName,
-        dopName: _dopName,
-        lineNumber: processLineNumber(_lineNumber),
-        homePhone: _homePhone,
-        workPhone: _workPhone,
-        cellPhone: _cellPhone,
-        facebook: _facebook,
-        instagram: _instagram,
-        twitter: _twitter,
-        tiktok: _tiktok,
-        dob: _dob?.toUtc(),
-        crossingDate: _crossingDate?.toUtc(),
-        govtIssuedFirstName: _govtIssuedFirstName,
-        govtIssuedMiddleName: _govtIssuedMiddleName,
-        govtIssuedLastName: _govtIssuedLastName,
-        address1: _address1,
-        address2: _address2,
-        city: _city,
-        state: _state,
-        zip: _zip,
         ethnicity: _ethnicity,
-        occupation: _occupation,
-        otherChapterAffiliation: _otherChapterAffiliation,
+        facebook: _facebook,
+       instagram: _instagram,
+        twitter: _twitter,
+        iAm: _iAm,
+        imInto: _imInto,
+        imOpenTo: _imOpenTo,
+        whatIDo: _whatIDo,
+        whatImLookingFor: _whatImLookingFor,
+        whatInterestsMe: _whatInterestsMe,
+        whereILive: _whereILive,
+        sexPreferences: _sexPreferences,
       );
 
       if (kDebugMode) {
@@ -268,75 +224,6 @@ class _EditProfileTabState extends State<EditProfileTab> {
     _alertSnackbar.showSuccessAlert(
         "Profile Updated. Now get out there in crowd.", context);
     GoRouter.of(context).go('/home');
-  }
-
-  getPhoneNumberListTile(value, String label, Function setValue) {
-    var theValue = value;
-    if (value == null) {
-      theValue = PhoneNumber(isoCode: IsoCode.US, nsn: "");
-    } else {
-      theValue = PhoneNumber(isoCode: IsoCode.US, nsn: value);
-    }
-
-    return Container(
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(label),
-            // value == null
-            //     ? Text('no date selected')
-            //     : Text("${value?.toLocal()}".split(' ')[0]),
-            const SizedBox(
-              width: 20.0,
-            ),
-            SizedBox(
-              height: 48,
-              width: 300,
-              child: PhoneFormField(
-                // key: Key(label.replaceAll(" ", "-")),
-                initialValue: theValue,
-                // can't be supplied simultaneously
-                shouldFormat: true,
-                // default
-                defaultCountry: IsoCode.US,
-                // default
-                decoration: InputDecoration(
-                    labelText: label, // default to null
-                    border:
-                        OutlineInputBorder() // default to UnderlineInputBorder(),
-                    // ...
-                    ),
-                validator: PhoneValidator.validMobile(),
-                // default PhoneValidator.valid()
-                isCountryChipPersistent: false,
-                // default
-                isCountrySelectionEnabled: false,
-                // default
-                // countrySelectorNavigator: CountrySelectorNavigator.bottomSheet(),
-                // showFlagInInput: true,  // default
-                // flagSize: 16,           // default
-                autofillHints: [AutofillHints.telephoneNumber],
-                // default to null
-                enabled: true,
-                // default
-                autofocus: false,
-                // default
-                onSaved: (PhoneNumber? p) {
-                  setValue(p?.nsn);
-                },
-                // default null
-                onChanged: (PhoneNumber? p) {
-                  print("phone changed: ${p?.nsn}");
-                  setValue(p?.nsn);
-                }, // default null
-                // ... + other textfield params
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   @override
@@ -388,42 +275,6 @@ class _EditProfileTabState extends State<EditProfileTab> {
                       _displayName = e;
                     },
                     labelText: 'Display Name',
-                  ),
-                ),
-                ListTile(
-                  title: TextFieldWrapped(
-                    key: ObjectKey(extProfile),
-                    initialValue: _govtIssuedFirstName ?? "",
-                    setField: (e) {
-                      setState(() {
-                        _govtIssuedFirstName = e;
-                      });
-                    },
-                    labelText: "First Name",
-                  ),
-                ),
-                ListTile(
-                  title: TextFieldWrapped(
-                    key: ObjectKey(extProfile),
-                    initialValue: _govtIssuedMiddleName ?? "",
-                    setField: (e) {
-                      setState(() {
-                        _govtIssuedMiddleName = e;
-                      });
-                    },
-                    labelText: "Middle Name",
-                  ),
-                ),
-                ListTile(
-                  title: TextFieldWrapped(
-                    key: ObjectKey(extProfile),
-                    initialValue: _govtIssuedLastName ?? "",
-                    setField: (e) {
-                      setState(() {
-                        _govtIssuedLastName = e;
-                      });
-                    },
-                    labelText: "Last Name",
                   ),
                 ),
                 ListTile(
@@ -479,20 +330,6 @@ class _EditProfileTabState extends State<EditProfileTab> {
                   ]),
                 ),
                 ListTile(
-                  title: Flex(direction: Axis.horizontal, children: [
-                    Flexible(
-                      child: DateInputWrapped(
-                          value: _dob ?? _dob,
-                          label: "Date of Birth",
-                          setValue: (e) {
-                            setState(() {
-                              _dob = e;
-                            });
-                          }),
-                    ),
-                  ]),
-                ),
-                ListTile(
                   title: TextFieldWrapped(
                     key: ObjectKey(extProfile),
                     initialValue: _shortBio ?? "",
@@ -521,97 +358,17 @@ class _EditProfileTabState extends State<EditProfileTab> {
                   ),
                 ),
                 ListTile(
-                  title: Column(
-                    children: [
-                      Text(_otherChapterAffiliation ?? ""),
-                      DropdownInputWrapped(
-                          value: _otherChapterAffiliation,
-                          choices: const [
-                            "",
-                            "Alpha Iota(AI)",
-                            "Lambda Zeta(LZ)",
-                            "Zeta Gamma(ZG)",
-                            "Lambda Mu(LM)"
-                          ],
-                          label: "Other Chapter Affiliation",
-                          setValue: (e) {
-                            setState(() {
-                              _otherChapterAffiliation = e;
-                            });
-                          }),
-                    ],
-                  ),
-                ),
-                ListTile(
                   title: TextFieldWrapped(
                     key: ObjectKey(extProfile),
-                    initialValue: _dopName ?? "",
+                    initialValue: _whereILive ?? "",
                     setField: (e) {
                       setState(() {
-                        _dopName = e;
+                        _whereILive = e;
                       });
                     },
-                    labelText: "Dean's Name",
-                  ),
-                ),
-                ListTile(
-                  title: Flex(direction: Axis.horizontal, children: [
-                    Flexible(
-                      child: DateInputWrapped(
-                          value: _crossingDate ?? _crossingDate,
-                          label: "Date you Crossed",
-                          setValue: (e) {
-                            setState(() {
-                              _crossingDate = e;
-                            });
-                          }),
-                    ),
-                  ]),
-                ),
-                ListTile(
-                  title: TextFieldWrapped(
-                    key: ObjectKey(extProfile),
-                    initialValue: _entireLinesName ?? "",
-                    setField: (e) {
-                      setState(() {
-                        _entireLinesName = e;
-                      });
-                    },
-                    minLines: 2,
-                    maxLines: 3,
-                    labelText: "Entire Line's Name",
-                  ),
-                ),
-                ListTile(
-                  title: TextFieldWrapped(
-                    key: ObjectKey(extProfile),
-                    initialValue: _lineName ?? "",
-                    setField: (e) {
-                      setState(() {
-                        _lineName = e;
-                      });
-                    },
-                    labelText: "Line Name",
-                  ),
-                ),
-                ListTile(
-                  title: Column(
-                    children: [
-                      Text(_lineNumber.toString() ?? "none"),
-                      DropdownInputWrapped(
-                        value:
-                            _lineNumber != null ? _lineNumber.toString() : null,
-                        choices: [null, "", "0", "1", "3", "4", "5", "6", "7"],
-                        label: "Line Number",
-                        setValue: (String e) {
-                          setState(
-                            () {
-                              _lineNumber = e;
-                            },
-                          );
-                        },
-                      ),
-                    ],
+                    minLines: 3,
+                    maxLines: 5,
+                    labelText: "Where I Live",
                   ),
                 ),
                 ListTile(
@@ -657,122 +414,85 @@ class _EditProfileTabState extends State<EditProfileTab> {
                 ListTile(
                   title: TextFieldWrapped(
                     key: ObjectKey(extProfile),
-                    initialValue: _tiktok ?? "",
+                    initialValue: _iAm ?? "",
                     setField: (e) {
                       setState(
                         () {
-                          _tiktok = e;
+                          _iAm = e;
                         },
                       );
                     },
-                    labelText: "Tik Tok",
+                    labelText: "I Am",
                   ),
                 ),
                 ListTile(
                   title: TextFieldWrapped(
                     key: ObjectKey(extProfile),
-                    initialValue: _address1,
+                    initialValue: _imOpenTo ?? "",
                     setField: (e) {
                       setState(
                         () {
-                          _address1 = e;
+                          _imOpenTo = e;
                         },
                       );
                     },
-                    labelText: "Address 1",
+                    labelText: "I'm Open To",
                   ),
                 ),
                 ListTile(
                   title: TextFieldWrapped(
                     key: ObjectKey(extProfile),
-                    initialValue: _address2,
+                    initialValue: _whatImLookingFor ?? "",
                     setField: (e) {
                       setState(
                         () {
-                          _address2 = e;
+                          _whatImLookingFor = e;
                         },
                       );
                     },
-                    labelText: "Address 2",
+                    labelText: "What I'm Looking For",
                   ),
                 ),
                 ListTile(
                   title: TextFieldWrapped(
                     key: ObjectKey(extProfile),
-                    initialValue: _city,
+                    initialValue: _whatIDo ?? "",
                     setField: (e) {
                       setState(
                         () {
-                          _city = e;
+                          _whatIDo = e;
                         },
                       );
                     },
-                    labelText: "City",
+                    labelText: "What I do",
                   ),
                 ),
                 ListTile(
                   title: TextFieldWrapped(
                     key: ObjectKey(extProfile),
-                    initialValue: _state,
+                    initialValue: _whatInterestsMe ?? "",
                     setField: (e) {
                       setState(
                         () {
-                          _state = e;
+                          _whatInterestsMe = e;
                         },
                       );
                     },
-                    labelText: "State",
+                    labelText: "What Interests Me",
                   ),
                 ),
                 ListTile(
                   title: TextFieldWrapped(
                     key: ObjectKey(extProfile),
-                    initialValue: _zip,
+                    initialValue: _sexPreferences ?? "",
                     setField: (e) {
                       setState(
                         () {
-                          _zip = e;
+                          _sexPreferences = e;
                         },
                       );
                     },
-                    labelText: "Zip",
-                  ),
-                ),
-                ListTile(
-                  key: Key("cell"),
-                  title: getPhoneNumberListTile(
-                    _cellPhone,
-                    "Cell Number",
-                    (e) {
-                      print("setting cell number $e");
-                      if (e != null) _cellPhone = e;
-
-                      setState(() {});
-                    },
-                  ),
-                ),
-                ListTile(
-                  key: Key("home"),
-                  title: getPhoneNumberListTile(
-                    _homePhone,
-                    "Home Number",
-                    (e) {
-                      print("setting home number $e");
-                      if (e != null) _homePhone = e;
-                      setState(() {});
-                    },
-                  ),
-                ),
-                ListTile(
-                  key: Key("work"),
-                  title: getPhoneNumberListTile(
-                    _workPhone,
-                    "Work Number",
-                    (e) {
-                      print("setting work number $e");
-                      if (e != null) _workPhone = e;
-                      setState(() {});
-                    },
+                    labelText: "Sex Preferences",
                   ),
                 ),
                 ListTile(
@@ -794,18 +514,6 @@ class _EditProfileTabState extends State<EditProfileTab> {
                         },
                       );
                     },
-                  ),
-                ),
-                ListTile(
-                  title: TextFieldWrapped(
-                    key: ObjectKey(extProfile),
-                    initialValue: _occupation,
-                    setField: (e) {
-                      setState(() {
-                        _occupation = e;
-                      });
-                    },
-                    labelText: "Occupation",
                   ),
                 ),
                 ListTile(
