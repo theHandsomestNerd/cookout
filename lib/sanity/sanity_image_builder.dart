@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cookowt/sanity/sanity_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sanity_image_url/flutter_sanity_image_url.dart';
@@ -33,7 +34,7 @@ class SanityImageBuilder {
 
       url = theUrl;
       if (theUrl != "") {
-        image = Image(image: NetworkImage(theUrl)).image;
+        image = CachedNetworkImageProvider(theUrl);
       }
     }
   }

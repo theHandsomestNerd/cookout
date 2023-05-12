@@ -31,7 +31,7 @@ class GeolocationController {
     });
 
     geolocationTimer ??=
-        Timer.periodic(const Duration(seconds: 30), (timer) async {
+        Timer.periodic(const Duration(seconds: 60), (timer) async {
       // print("Location Timer went off $timer");
 
       var theCurrentLocation = await _recordCurrentPosition();

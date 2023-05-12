@@ -6,6 +6,7 @@ import 'package:cookowt/models/like.dart';
 import 'package:cookowt/models/responses/chat_api_get_profile_likes_response.dart';
 import 'package:cookowt/sanity/sanity_image_builder.dart';
 import 'package:cookowt/shared_components/comments/paged_comment_thread.dart';
+import 'package:cookowt/shared_components/expanded_interactive_viewer.dart';
 import 'package:cookowt/shared_components/tool_button.dart';
 import 'package:cookowt/wrappers/analytics_loading_button.dart';
 import 'package:cookowt/wrappers/app_scaffold_wrapper.dart';
@@ -52,8 +53,8 @@ class _SoloPostPageState extends State<SoloPostPage> {
           widget.thisPostId!, 'post-comment');
       if (kDebugMode) {
         print(
-        "The COmments retreived profClient:$profileClient ${widget.thisPostId} $comments",
-      );
+          "The COmments retreived profClient:$profileClient ${widget.thisPostId} $comments",
+        );
       }
       return comments;
     }
@@ -223,6 +224,8 @@ class _SoloPostPageState extends State<SoloPostPage> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return AppScaffoldWrapper(
@@ -246,13 +249,11 @@ class _SoloPostPageState extends State<SoloPostPage> {
             Flex(
               direction: Axis.vertical,
               children: [
-                Flexible(
-                  flex: 4,
-                  child: CardWithBackground(
-                    image: SanityImageBuilder.imageProviderFor(
-                            sanityImage: thePost?.mainImage)
-                        .image,
-                    child: Container(),
+                Expanded(
+                  child: ExpandedInteractiveViewer(
+      image: SanityImageBuilder.imageProviderFor(
+          sanityImage: thePost?.mainImage)
+          .image,
                   ),
                 ),
               ],
