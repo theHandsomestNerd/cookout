@@ -27,6 +27,8 @@ class FollowsTab extends StatelessWidget {
         key: ObjectKey(profileFollows),
         follows: profileFollows ?? [],
       ),
+      searchBoxSearchTerms: '',
+      searchBoxSetTerms: () {},
     );
   }
 }

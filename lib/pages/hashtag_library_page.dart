@@ -53,56 +53,34 @@ class _HashtagLibraryPageState extends State<HashtagLibraryPage> {
 
   @override
   didChangeDependencies() async {
-    // var theChatController = AuthInherited.of(context)?.chatController;
-    // var theAuthController = AuthInherited.of(context)?.authController;
-    var theAnalyticsController = AuthInherited.of(context)?.analyticsController;
-    var theClient = AuthInherited.of(context)?.chatController?.profileClient;
-    if (theClient != null) {
-      client = theClient;
-      setState(() {});
-    }
-
-    if (theAnalyticsController != null && analyticsController == null) {
-      analyticsController = theAnalyticsController;
-      setState(() {});
-    }
-
-    // AnalyticsController? theAnalyticsController =
-    //     AuthInherited.of(context)?.analyticsController;
-
-    // if(analyticsController == null && theAnalyticsController != null) {
-    //   await theAnalyticsController.logScreenView('profiles-page');
-    //   analyticsController = theAnalyticsController;
+    // if(analyticsController == null) {
+      var theAnalyticsController =
+          AuthInherited.of(context)?.analyticsController;
+      if (theAnalyticsController != null && analyticsController == null) {
+        analyticsController = theAnalyticsController;
+        setState(() {});
+      }
     // }
-    // if (authController == null && theAuthController != null) {
-    //   authController = theAuthController;
-    //   setState(() {});
-    // }
-    // myUserId =
-    //     AuthInherited.of(context)?.authController?.myAppUser?.userId ?? "";
-    // if((widget.profiles?.length??-1) > 0){
     //
-    // // profiles = theAuthController;
-    //
-    // } else {
-    //   profiles = await chatController?.updateProfiles();
+    // if(client == null) {
+      var theClient = AuthInherited.of(context)?.chatController?.profileClient;
+
+      if (theClient != null) {
+        client = theClient;
+        setState(() {});
+      }
     // }
 
-    // profiles = await chatController?.updateProfiles();
-    // setState(() {});
     super.didChangeDependencies();
   }
 
   String? searchTerms="";
 
   Future<void> _fetchPage(String pageKey) async {
-    // print(
-    //     "Retrieving post page with pagekey $pageKey  and size $_pageSize $client");
     try {
       List<Post>? newItems;
-      newItems = await client.searchHashtags(searchTerms,pageKey, _pageSize);
+      newItems = await client.search(searchTerms,SEARCH_TYPE_ENUM.hashtags,pageKey, _pageSize) as List<Post>;
 
-      // print("Got more items ${newItems.length}");
       final isLastPage = (newItems.length) < _pageSize;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);
@@ -116,8 +94,8 @@ class _HashtagLibraryPageState extends State<HashtagLibraryPage> {
 
       });
     } catch (error) {
-      print(error);
-      // _pagingController.error = error;
+      // print(error);
+      _pagingController.error = error;
     }
     setState(() {});
   }
@@ -131,20 +109,8 @@ class _HashtagLibraryPageState extends State<HashtagLibraryPage> {
   @override
   Widget build(BuildContext context) {
     final List<String> hashtagList = [
-      // "the-lines",
-      // "numbers",
-      // "theta-chi",
-      // "other-bruhs",
-      // "other-greeks"
+      "popular",
     ];
-
-    List<Post> searchResults;
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
 
     return AppScaffoldWrapper(
       key: widget.key,
@@ -155,7 +121,6 @@ class _HashtagLibraryPageState extends State<HashtagLibraryPage> {
         direction: Axis.vertical,
         children: List.from([
           SearchBox(
-            searchType: SEARCH_TYPE_ENUM.hashtag,
             searchTerms: searchTerms??"",
             setTerms: (terms) async {
               //search hashtags

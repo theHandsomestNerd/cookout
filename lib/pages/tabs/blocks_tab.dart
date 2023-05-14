@@ -31,11 +31,13 @@ class _BlocksTabState extends State<BlocksTab> {
   @override
   Widget build(BuildContext context) {
     return SearchAndList(
+
+
       isSearchEnabled: false,
       listChild: BlockThread(
         unblockProfile: widget.unblockProfile,
         blocks: widget.blocks,
-      ),
+      ), searchBoxSearchTerms: '', searchBoxSetTerms: (){},
     );
   }
 }

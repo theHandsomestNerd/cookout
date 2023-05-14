@@ -9,60 +9,63 @@ import '../../models/controllers/auth_inherited.dart';
 class ProfileGrid extends StatefulWidget {
   const ProfileGrid({
     super.key,
+    required this.pagingController
   });
+
+  final PagingController<String, AppUser> pagingController;
 
   @override
   State<ProfileGrid> createState() => _ProfileGridState();
 }
 
 class _ProfileGridState extends State<ProfileGrid> {
-  static const _pageSize = 40;
-  late ApiClient client;
-
-  @override
-  didChangeDependencies() async {
-
-    var theClient = AuthInherited.of(context)?.chatController?.profileClient;
-    if (theClient != null) {
-      client = theClient;
-    }
-
-    setState(() {});
-    super.didChangeDependencies();
-  }
-
-  final PagingController<String, AppUser> _pagingController =
-      PagingController(firstPageKey: "");
-
-  Future<void> _fetchPage(String pageKey) async {
-    // print("Retrieving page with pagekey $pageKey  and size $_pageSize $client");
-    try {
-      List<AppUser>? newItems;
-      newItems = await client.fetchProfilesPaginated(pageKey, _pageSize);
-
-      // print("Got more items ${newItems.length}");
-      final isLastPage = (newItems.length) < _pageSize;
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = newItems.last.userId;
-        if (nextPageKey != null) {
-          _pagingController.appendPage(newItems, nextPageKey);
-        }
-      }
-    } catch (error) {
-      _pagingController.error = error;
-    }
-  }
-
-  @override
-  void initState() {
-    _pagingController.addPageRequestListener((theLastId) async {
-      return _fetchPage(theLastId);
-    });
-
-    super.initState();
-  }
+  // static const _pageSize = 40;
+  // late ApiClient client;
+  //
+  // @override
+  // didChangeDependencies() async {
+  //
+  //   var theClient = AuthInherited.of(context)?.chatController?.profileClient;
+  //   if (theClient != null) {
+  //     client = theClient;
+  //   }
+  //
+  //   setState(() {});
+  //   super.didChangeDependencies();
+  // }
+  //
+  // final PagingController<String, AppUser> _pagingController =
+  //     PagingController(firstPageKey: "");
+  //
+  // Future<void> _fetchPage(String pageKey) async {
+  //   // print("Retrieving page with pagekey $pageKey  and size $_pageSize $client");
+  //   try {
+  //     List<AppUser>? newItems;
+  //     newItems = await client.fetchProfilesPaginated(pageKey, _pageSize);
+  //
+  //     // print("Got more items ${newItems.length}");
+  //     final isLastPage = (newItems.length) < _pageSize;
+  //     if (isLastPage) {
+  //       _pagingController.appendLastPage(newItems);
+  //     } else {
+  //       final nextPageKey = newItems.last.userId;
+  //       if (nextPageKey != null) {
+  //         _pagingController.appendPage(newItems, nextPageKey);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     _pagingController.error = error;
+  //   }
+  // }
+  //
+  // @override
+  // void initState() {
+  //   _pagingController.addPageRequestListener((theLastId) async {
+  //     return _fetchPage(theLastId);
+  //   });
+  //
+  //   super.initState();
+  // }
 
   // This widget is the root of your application.
   @override
@@ -74,7 +77,7 @@ class _ProfileGridState extends State<ProfileGrid> {
         crossAxisSpacing: 0,
         crossAxisCount: 4,
       ),
-      pagingController: _pagingController,
+      pagingController: widget.pagingController,
       builderDelegate: PagedChildBuilderDelegate<AppUser>(
         itemBuilder: (context, item, index) =>
             Center(
@@ -84,11 +87,5 @@ class _ProfileGridState extends State<ProfileGrid> {
             ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _pagingController.dispose();
-    super.dispose();
   }
 }

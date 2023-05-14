@@ -6,11 +6,10 @@ import 'package:flutter/material.dart';
 import '../pages/search_type_enum.dart';
 
 class SearchBox extends StatefulWidget {
-  const SearchBox({super.key, required this.searchTerms,required this.setTerms, this.searchType});
+  const SearchBox({super.key, required this.searchTerms,required this.setTerms});
 
   final String searchTerms;
   final Function setTerms;
-  final SEARCH_TYPE_ENUM? searchType;
 
   @override
   State<SearchBox> createState() => _SearchBoxState();

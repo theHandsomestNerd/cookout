@@ -44,7 +44,7 @@ class _TimelineEventsTabState extends State<TimelineEventsTab> {
       listChild: TimelineEventThread(
         key: ObjectKey(timelineEvents),
         timelineEvents: timelineEvents ?? [],
-      ),
+      ), searchBoxSearchTerms: '', searchBoxSetTerms: (){},
     );
   }
 }

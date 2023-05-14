@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cookowt/pages/search_type_enum.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -232,8 +233,8 @@ class ApiClient {
     return <Post>[];
   }
 
-  Future<List<Post>> searchHashtags(
-      String? searchTerms, String? lastId, int? pageSize) async {
+  Future<List<dynamic>> search(
+      String? searchTerms,SEARCH_TYPE_ENUM? searchType, String? lastId, int? pageSize) async {
     var thePageSize = pageSize;
     if (thePageSize == null) {
       thePageSize = 10;
@@ -241,7 +242,7 @@ class ApiClient {
 
     if (kDebugMode) {
       print(
-          "Retrieving paginated hashtagged with ${searchTerms} Posts with lastid $lastId and pagesize $thePageSize");
+          "Retrieving paginated ${searchType} with ${searchTerms} Posts with lastid $lastId and pagesize $thePageSize");
     }
     String? token = await getIdToken();
     if (DefaultConfig.theAuthBaseUrl == "") {
@@ -249,31 +250,47 @@ class ApiClient {
         print(
             "paginated searching hashtagged posts authBaseUrl empty ${DefaultConfig.theAuthBaseUrl}");
       }
-      return <Post>[];
+      return <dynamic>[];
     }
 
     if (token != null && DefaultConfig.theAuthBaseUrl != "") {
       final response = await http.post(
           Uri.parse(
-              "${DefaultConfig.theAuthBaseUrl}/search-hashtagged-posts-paginated"),
+              "${DefaultConfig.theAuthBaseUrl}/paginated-search"),
           headers: {
             "Authorization": ("Bearer $token")
           },
           body: {
             "searchTerms": searchTerms,
             "pageSize": thePageSize.toString(),
-            "lastId": lastId
+            "lastId": lastId,
+            "searchType": searchType.toString()
           });
 
       dynamic processedResponse = jsonDecode(response.body);
       print("search result posts retrieved ${processedResponse}");
-      if (processedResponse['posts'] != null &&
-          processedResponse['posts'] != "null") {
-        ChatApiGetProfilePostsResponse responseModelList =
+      switch(searchType){
+        case SEARCH_TYPE_ENUM.hashtags:
+          if (processedResponse['posts'] != null &&
+              processedResponse['posts'] != "null") {
+            ChatApiGetProfilePostsResponse responseModelList =
             ChatApiGetProfilePostsResponse.fromJson(processedResponse['posts']);
 
-        return responseModelList.list;
+            return responseModelList.list;
+          }
+          break;
+        case SEARCH_TYPE_ENUM.profiles:
+          if (processedResponse['profiles'] != null &&
+              processedResponse['profiles'] != "null") {
+            AuthApiProfileListResponse responseModelList =
+            AuthApiProfileListResponse.fromJson(processedResponse['profiles']);
+
+            return responseModelList.list;
+          }
+          break;
       }
+
+
     }
     return <Post>[];
   }

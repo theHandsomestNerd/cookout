@@ -23,6 +23,8 @@ class LikesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SearchAndList(
+      searchBoxSearchTerms: "",
+      searchBoxSetTerms: (){},
       listChild: LikeThread(
         key: ObjectKey(profileLikes),
         likes: profileLikes ?? [],

@@ -7,11 +7,15 @@ class SearchAndList extends StatefulWidget {
     super.key,
     required this.listChild,
     this.isSearchEnabled,
+    required this.searchBoxSearchTerms,
+    required this.searchBoxSetTerms,
   });
 
   final Widget listChild;
   final bool? isSearchEnabled;
+  final String searchBoxSearchTerms;
 
+  final Function searchBoxSetTerms;
   @override
   State<SearchAndList> createState() => _SearchAndListState();
 }
@@ -25,13 +29,13 @@ class _SearchAndListState extends State<SearchAndList> {
             ? SizedBox(
                 height: 100,
                 child: SearchBox(
-                  searchTerms: "",
-                  setTerms: () {},
+                  searchTerms: widget.searchBoxSearchTerms,
+                  setTerms: widget.searchBoxSetTerms,
                 ),
               )
             : const Text(""),
         Expanded(
-          child:  widget.listChild,
+          child: widget.listChild,
         ),
       ]),
     );

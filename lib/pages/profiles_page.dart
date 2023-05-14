@@ -79,36 +79,9 @@ class _ProfilesPageState extends State<ProfilesPage> {
           setState(() {});
         },
       ),
-      const Text(
-        'Index 4: Albums',
-        style: optionStyle,
-      ),
     ];
 
     return theOptions.elementAt(selectedIndex);
-  }
-
-  void _onItemTapped(int index)async {
-    switch (index) {
-      case 0:
-        await analyticsController?.logScreenView('profiles-tab');
-        break;
-      case 1:
-        await analyticsController?.logScreenView('timeline-events-tab');
-        break;
-      case 3:
-        await analyticsController?.logScreenView('blocks-tab');
-        break;
-      case 5:
-        await analyticsController?.logScreenView('posts-tab');
-        break;
-      default:
-        await analyticsController?.sendAnalyticsEvent('no-such-tab',{'tabIndex':index});
-
-    }
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   @override
