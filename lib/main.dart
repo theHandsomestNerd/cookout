@@ -17,7 +17,6 @@ import 'package:cookowt/pages/hashtag_library_page.dart';
 import 'package:cookowt/pages/hashtag_page.dart';
 import 'package:cookowt/pages/home_page.dart';
 import 'package:cookowt/pages/logout_page.dart';
-import 'package:cookowt/pages/posts_page.dart';
 import 'package:cookowt/pages/profiles_page.dart';
 import 'package:cookowt/pages/register_page.dart';
 import 'package:cookowt/pages/settings_page.dart';
@@ -134,7 +133,7 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
           path: '/postsPage',
           builder: (BuildContext context, GoRouterState state) =>
-              PostsPage()),
+              HashtagLibraryPage()),
       // GoRoute(
       //     path: '/createPostsPage',
       //     builder: (BuildContext context, GoRouterState state) =>
@@ -172,10 +171,7 @@ class _MyAppState extends State<MyApp> {
                 key: Key(state.pathParameters["id"]!),
                 thisHashtagId: state.pathParameters["id"],
               )),
-      GoRoute(
-          path: '/hashtagCollections',
-          builder: (BuildContext context, GoRouterState state) =>
-              const HashtagLibraryPage()),
+
     GoRoute(
           path: '/chapterRoster',
           builder: (BuildContext context, GoRouterState state) =>

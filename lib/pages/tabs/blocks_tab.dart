@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/block.dart';
 import '../../models/controllers/auth_inherited.dart';
+import '../search_type_enum.dart';
 
 class BlocksTab extends StatefulWidget {
   const BlocksTab({super.key, required this.blocks, required this.unblockProfile});
@@ -31,8 +32,7 @@ class _BlocksTabState extends State<BlocksTab> {
   @override
   Widget build(BuildContext context) {
     return SearchAndList(
-
-
+      searchType: SEARCH_TYPE_ENUM.hashtagRelations,
       isSearchEnabled: false,
       listChild: BlockThread(
         unblockProfile: widget.unblockProfile,

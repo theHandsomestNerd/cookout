@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../models/app_user.dart';
 import '../../models/follow.dart';
 import '../../shared_components/follows/follows_thread.dart';
+import '../search_type_enum.dart';
 
 class FollowsTab extends StatelessWidget {
   const FollowsTab(
@@ -23,6 +24,7 @@ class FollowsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SearchAndList(
+      searchType: SEARCH_TYPE_ENUM.profiles,
       listChild: FollowThread(
         key: ObjectKey(profileFollows),
         follows: profileFollows ?? [],

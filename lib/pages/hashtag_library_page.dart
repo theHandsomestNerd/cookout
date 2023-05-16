@@ -1,3 +1,4 @@
+import 'package:cookowt/layout/search_and_list.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -26,7 +27,7 @@ class _HashtagLibraryPageState extends State<HashtagLibraryPage> {
   PanelController panelController = PanelController();
 
   final PagingController<String, Post> _pagingController =
-  PagingController(firstPageKey: "");
+      PagingController(firstPageKey: "");
 
   // AuthController? authController;
   late ApiClient client;
@@ -54,32 +55,32 @@ class _HashtagLibraryPageState extends State<HashtagLibraryPage> {
   @override
   didChangeDependencies() async {
     // if(analyticsController == null) {
-      var theAnalyticsController =
-          AuthInherited.of(context)?.analyticsController;
-      if (theAnalyticsController != null && analyticsController == null) {
-        analyticsController = theAnalyticsController;
-        setState(() {});
-      }
+    var theAnalyticsController = AuthInherited.of(context)?.analyticsController;
+    if (theAnalyticsController != null && analyticsController == null) {
+      analyticsController = theAnalyticsController;
+      setState(() {});
+    }
     // }
     //
     // if(client == null) {
-      var theClient = AuthInherited.of(context)?.chatController?.profileClient;
+    var theClient = AuthInherited.of(context)?.chatController?.profileClient;
 
-      if (theClient != null) {
-        client = theClient;
-        setState(() {});
-      }
+    if (theClient != null) {
+      client = theClient;
+      setState(() {});
+    }
     // }
 
     super.didChangeDependencies();
   }
 
-  String? searchTerms="";
+  String? searchTerms = "";
 
   Future<void> _fetchPage(String pageKey) async {
     try {
       List<Post>? newItems;
-      newItems = await client.search(searchTerms,SEARCH_TYPE_ENUM.hashtags,pageKey, _pageSize) as List<Post>;
+      newItems = await client.search(searchTerms,
+          SEARCH_TYPE_ENUM.hashtagRelations, pageKey, _pageSize) as List<Post>;
 
       final isLastPage = (newItems.length) < _pageSize;
       if (isLastPage) {
@@ -90,9 +91,7 @@ class _HashtagLibraryPageState extends State<HashtagLibraryPage> {
           _pagingController.appendPage(newItems, nextPageKey);
         }
       }
-      setState(() {
-
-      });
+      setState(() {});
     } catch (error) {
       // print(error);
       _pagingController.error = error;
@@ -117,26 +116,28 @@ class _HashtagLibraryPageState extends State<HashtagLibraryPage> {
       floatingActionMenu: HomePageMenu(
         updateMenu: () {},
       ),
-      child: Flex(
-        direction: Axis.vertical,
-        children: List.from([
-          SearchBox(
-            searchTerms: searchTerms??"",
-            setTerms: (terms) async {
-              //search hashtags
-              searchTerms = terms;
-              _pagingController.refresh();
-              await _fetchPage(_pagingController.firstPageKey);
-              // searchResults = await client.searchHashtags(terms, "", 10);
-            },
-          )
-        ])..addAll(hashtagList.map((element) {
+      child: SearchAndList(
+        searchType: SEARCH_TYPE_ENUM.hashtagRelations,
+        searchBoxSearchTerms: searchTerms ?? "",
+        searchBoxSetTerms: (terms) async {
+          //search hashtags
+          searchTerms = terms;
+          _pagingController.refresh();
+          await _fetchPage(_pagingController.firstPageKey);
+          // searchResults = await client.searchHashtags(terms, "", 10);
+        },
+        isSearchEnabled: true,
+        listChild: Flex(
+          direction: Axis.vertical,
+          children: List.from(hashtagList.map((element) {
             return Hashtag_Collection_Block(
               collectionSlug: element,
             );
           }).toList())
-          ..addAll([Expanded(
-              child: PostsContent(pagingController: _pagingController))]),
+            ..addAll([
+              Expanded(child: PostsContent(pagingController: _pagingController))
+            ]),
+        ),
       ),
     );
   }

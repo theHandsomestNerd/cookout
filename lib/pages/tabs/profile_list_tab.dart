@@ -77,6 +77,7 @@ class _ProfileListTabState extends State<ProfileListTab> {
   @override
   Widget build(BuildContext context) {
     return SearchAndList(
+      searchType: SEARCH_TYPE_ENUM.profiles,
       searchBoxSearchTerms: searchTerms ?? "",
       searchBoxSetTerms: (terms) async {
         //search hashtags

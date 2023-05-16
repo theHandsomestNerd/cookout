@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cookowt/models/responses/chat_api_get_hashtags_response.dart';
 import 'package:cookowt/pages/search_type_enum.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -260,8 +261,11 @@ class ApiClient {
         theSearchType = "profiles";
         break;
       case SEARCH_TYPE_ENUM.hashtags:
-      default:
         theSearchType = "hashtags";
+        break;
+      case SEARCH_TYPE_ENUM.hashtagRelations:
+      default:
+        theSearchType = "hashtagRelations";
         break;
     }
 
@@ -281,12 +285,22 @@ class ApiClient {
       dynamic processedResponse = jsonDecode(response.body);
       print("search result ${searchType} retrieved ${processedResponse}");
       switch (searchType) {
-        case SEARCH_TYPE_ENUM.hashtags:
+        case SEARCH_TYPE_ENUM.hashtagRelations:
           if (processedResponse['posts'] != null &&
               processedResponse['posts'] != "null") {
             ChatApiGetProfilePostsResponse responseModelList =
                 ChatApiGetProfilePostsResponse.fromJson(
                     processedResponse['posts']);
+
+            return responseModelList.list;
+          }
+          break;
+        case SEARCH_TYPE_ENUM.hashtags:
+          if (processedResponse['hashtags'] != null &&
+              processedResponse['hashtags'] != "null") {
+            ChatApiGetHashtagsResponse responseModelList =
+            ChatApiGetHashtagsResponse.fromJson(
+                    processedResponse['hashtags']);
 
             return responseModelList.list;
           }

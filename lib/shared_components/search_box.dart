@@ -1,15 +1,26 @@
 import 'dart:developer';
 
+import 'package:cookowt/models/app_user.dart';
+import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../models/clients/api_client.dart';
+import '../models/controllers/auth_inherited.dart';
+import '../models/hash_tag.dart';
 import '../pages/search_type_enum.dart';
 
 class SearchBox extends StatefulWidget {
-  const SearchBox({super.key, required this.searchTerms,required this.setTerms});
+  const SearchBox(
+      {super.key,
+      required this.searchTerms,
+      required this.setTerms,
+      required this.searchType});
 
   final String searchTerms;
   final Function setTerms;
+
+  final SEARCH_TYPE_ENUM searchType;
 
   @override
   State<SearchBox> createState() => _SearchBoxState();
@@ -17,69 +28,84 @@ class SearchBox extends StatefulWidget {
 
 class _SearchBoxState extends State<SearchBox> {
   String _searchTerms = "";
-  void setTerms(terms) {
+
+  Future<List<String?>> setTerms(String terms) async {
     if (kDebugMode) {
       print(terms);
     }
-    widget.setTerms(terms);
     setState(() {
       _searchTerms = terms;
     });
+    await _getHashtagSuggestions(terms);
+    await widget.setTerms(terms);
+
+    return [terms];
   }
 
-  void _clearSearch() {
+  void _clearSearch() async {
     log("clear search");
-    setTerms("");
+    await setTerms("");
   }
-
-  // initState(){
-  // }
 
   @override
   void initState() {
     super.initState();
     _searchTerms = widget.searchTerms;
-    // if (widget == null) {
-    //   _controller = new TextEditingController(text: widget.initialValue);
-    // } else {
-    //   widget.controller.addListener(_handleControllerChanged);
-    // }
+  }
+
+  ApiClient? client;
+
+  // final AlertSnackbar _alertSnackbar = AlertSnackbar();
+
+  @override
+  didChangeDependencies() async {
+    var theClient = AuthInherited.of(context)?.chatController?.profileClient;
+    if (theClient != null) {
+      client = theClient;
+    }
+
+    setState(() {});
+    super.didChangeDependencies();
+  }
+
+  List<String> _hashtagSuggestions = [];
+
+  _getHashtagSuggestions(terms) async {
+    switch (widget.searchType) {
+      case SEARCH_TYPE_ENUM.profiles:
+        List<String> theSuggestions = (await client?.search(
+                terms, widget.searchType, "", 500) as List<AppUser>)
+            .map((AppUser suggestedHashtag) {
+          return suggestedHashtag.displayName ?? "";
+        }).toList();
+
+        _hashtagSuggestions = theSuggestions;
+        setState(() {});
+        return theSuggestions;
+      case SEARCH_TYPE_ENUM.hashtagRelations:
+        List<String> theSuggestions = (await client?.search(
+            terms, SEARCH_TYPE_ENUM.hashtags, "", 500) as List<Hashtag>)
+            .map((Hashtag suggestedHashtag) {
+          return suggestedHashtag.tag ?? "";
+        }).toList();
+        _hashtagSuggestions = theSuggestions;
+        setState(() {});
+        return theSuggestions;
+        break;
+      case SEARCH_TYPE_ENUM.hashtags:
+        // TODO: Handle this case.
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 10,
-            child: TextFormField(
-              key: ObjectKey(_searchTerms),
-              autofocus: true,
-              initialValue: _searchTerms,
-              onChanged: (e) {
-                setTerms(e);
-              },
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Enter your search',
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: IconButton(
-              onPressed: _clearSearch,
-              icon: const Icon(
-                Icons.close,
-                size: 24.0,
-                semanticLabel: 'Clear Search',
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return EasySearchBar(
+        title: const Text('Search'),
+        onSearch: (value) {
+          return setTerms(value);
+          // return [''];
+        },
+        suggestions: _hashtagSuggestions);
   }
 }

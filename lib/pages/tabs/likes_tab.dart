@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/app_user.dart';
 import '../../models/like.dart';
+import '../search_type_enum.dart';
 
 class LikesTab extends StatelessWidget {
   const LikesTab(
@@ -23,6 +24,7 @@ class LikesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SearchAndList(
+      searchType: SEARCH_TYPE_ENUM.profiles,
       searchBoxSearchTerms: "",
       searchBoxSetTerms: (){},
       listChild: LikeThread(
