@@ -34,7 +34,7 @@ class SanityImageBuilder {
 
       url = theUrl;
       if (theUrl != "") {
-        image = CachedNetworkImageProvider(theUrl);
+        image = CachedNetworkImageProvider(theUrl, maxHeight: 350, maxWidth: 350);
       }
     }
   }
