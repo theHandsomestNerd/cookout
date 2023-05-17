@@ -260,6 +260,9 @@ class ApiClient {
       case SEARCH_TYPE_ENUM.profiles:
         theSearchType = "profiles";
         break;
+      case SEARCH_TYPE_ENUM.posts:
+        theSearchType = "posts";
+        break;
       case SEARCH_TYPE_ENUM.hashtags:
         theSearchType = "hashtags";
         break;
@@ -285,6 +288,7 @@ class ApiClient {
       dynamic processedResponse = jsonDecode(response.body);
       print("search result ${searchType} retrieved ${processedResponse}");
       switch (searchType) {
+        case SEARCH_TYPE_ENUM.posts:
         case SEARCH_TYPE_ENUM.hashtagRelations:
           if (processedResponse['posts'] != null &&
               processedResponse['posts'] != "null") {

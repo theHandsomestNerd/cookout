@@ -83,6 +83,7 @@ class _SearchBoxState extends State<SearchBox> {
         _suggestions = theSuggestions;
         setState(() {});
         return theSuggestions;
+      case SEARCH_TYPE_ENUM.posts:
       case SEARCH_TYPE_ENUM.hashtagRelations:
         List<String> theSuggestions = (await client?.search(
                 terms, SEARCH_TYPE_ENUM.hashtags, "", 500) as List<Hashtag>)
@@ -92,7 +93,6 @@ class _SearchBoxState extends State<SearchBox> {
         _suggestions = theSuggestions;
         setState(() {});
         return theSuggestions;
-        break;
       case SEARCH_TYPE_ENUM.hashtags:
         // TODO: Handle this case.
         break;

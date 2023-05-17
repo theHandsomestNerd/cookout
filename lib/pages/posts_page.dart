@@ -1,3 +1,5 @@
+import 'package:cookowt/layout/search_and_list.dart';
+import 'package:cookowt/pages/search_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -95,7 +97,7 @@ class _PostsPageState extends State<PostsPage> {
     //     "Retrieving post page with pagekey $pageKey  and size $_pageSize $client");
     try {
       List<Post>? newItems;
-      newItems = await client.fetchPostsPaginated(pageKey, _pageSize);
+      newItems = await client.search(_searchTerms, SEARCH_TYPE_ENUM.posts, pageKey, _pageSize) as List<Post>;
 
       // print("Got more items ${newItems.length}");
       final isLastPage = (newItems.length) < _pageSize;
@@ -123,6 +125,8 @@ class _PostsPageState extends State<PostsPage> {
     super.dispose();
   }
 
+  String _searchTerms = "";
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -132,11 +136,17 @@ class _PostsPageState extends State<PostsPage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
+
     return AppScaffoldWrapper(
       floatingActionMenu: HomePageMenu(
         updateMenu: () {},
       ),
-      child: PostsContent(pagingController: _pagingController,),
+      // theAppBar: PreferredSizeWidget(),
+      child: SearchAndList(listChild: PostsContent(pagingController: _pagingController,), searchBoxSearchTerms: _searchTerms, searchBoxSetTerms: (value) async {
+        setState(() {
+          _searchTerms = value;
+        });
+      }, searchType: SEARCH_TYPE_ENUM.posts,),
     );
   }
 }

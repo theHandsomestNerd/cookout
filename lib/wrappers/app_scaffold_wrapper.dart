@@ -3,10 +3,11 @@ import 'package:cookowt/shared_components/logo.dart';
 import 'package:flutter/material.dart';
 
 class AppScaffoldWrapper extends StatelessWidget {
-  const AppScaffoldWrapper({Key? key, this.floatingActionMenu, required this.child})
+  const AppScaffoldWrapper({Key? key, this.floatingActionMenu, required this.child, this.isAppBar})
       : super(key: key);
 
   final Widget? floatingActionMenu;
+  final bool? isAppBar;
   final Widget child;
 
   @override
@@ -21,10 +22,10 @@ class AppScaffoldWrapper extends StatelessWidget {
             child: Scaffold(
               resizeToAvoidBottomInset: true,
               floatingActionButton: floatingActionMenu,
-              appBar: AppBar(
+              appBar: isAppBar == true ? AppBar(
                 backgroundColor: Colors.white.withOpacity(0.5),
                 title: const Logo(),
-              ),
+              ): null,
               body: Flex(
                 direction: Axis.vertical,
                 children: [
