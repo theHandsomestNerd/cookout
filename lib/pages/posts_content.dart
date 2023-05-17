@@ -80,6 +80,7 @@ class _PostsContentState extends State<PostsContent> {
   @override
   Widget build(BuildContext context) {
     return Flex(
+      key: ObjectKey(widget.pagingController.itemList),
       direction: Axis.vertical,
       children: [
         Expanded(
@@ -315,10 +316,13 @@ class _PostsContentState extends State<PostsContent> {
                                     ]),
                               ),
                               CreatePostPage(
-                                onPost: () {
+                                onPost: () async {
                                   panelController.close();
                                   widget.pagingController.refresh();
-                                  // _fetchPage(widget.pagingController.firstPageKey);
+                                  // widget.pagingController.notifyListeners();
+                                  // setState(() {
+                                  //
+                                  // });
                                   // widget.pagingController.firstPageKey
                                 },
                                 onClose: () {

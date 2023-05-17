@@ -28,6 +28,7 @@ class SoloProfilePage extends StatefulWidget {
   });
 
   final String id;
+
   // final AppUser? thisProfile;
 
   @override
@@ -37,7 +38,6 @@ class SoloProfilePage extends StatefulWidget {
 class _SoloProfilePageState extends State<SoloProfilePage> {
   bool _isThisMe = false;
   AppUser? thisProfile;
-
 
   List<Comment>? _profileComments = [];
 
@@ -86,9 +86,9 @@ class _SoloProfilePageState extends State<SoloProfilePage> {
         .getProfileFollows(widget.id) as ChatApiGetProfileFollowsResponse;
     var theLikes = await theChatController?.profileClient
         .getProfileLikes(widget.id) as ChatApiGetProfileLikesResponse;
-    var theComments =
-        await theChatController?.profileClient.getProfileComments(widget.id, 'profile-comment') ??
-            [];
+    var theComments = await theChatController?.profileClient
+            .getProfileComments(widget.id, 'profile-comment') ??
+        [];
 
     _profileComments = theComments;
     _profileLikes = theLikes.list;
@@ -107,11 +107,13 @@ class _SoloProfilePageState extends State<SoloProfilePage> {
 
     _isThisMe = widget.id == theAuthController?.myAppUser?.userId;
     String theId = widget.id;
-    for (var element in (theChatController?.profileList ??[])) {
-      if (element.userId == theId) {
-        thisProfile = element;
-      }
-    }
+    // for (var element in (theChatController?.profileList ??[])) {
+    //   if (element.userId == theId) {
+    //     thisProfile = element;
+    //   }
+    // }
+
+    thisProfile = await theAuthController?.getAppUser(theId);
 
     setState(() {});
     // if (kDebugMode) {
@@ -286,8 +288,9 @@ class _SoloProfilePageState extends State<SoloProfilePage> {
             _alertSnackbar.showErrorAlert(
                 "That like didnt register. Try Again.", innerContext);
           } else {
-            List<Comment> theComments =
-                await profileClient?.getProfileComments(widget.id, 'profile-comment') ?? [];
+            List<Comment> theComments = await profileClient?.getProfileComments(
+                    widget.id, 'profile-comment') ??
+                [];
             setState(() {
               _profileComments = theComments;
             });

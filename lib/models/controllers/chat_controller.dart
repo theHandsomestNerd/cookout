@@ -1,19 +1,19 @@
 import 'dart:math';
 
-import 'package:cookowt/config/default_config.dart';
-import 'package:cookowt/models/block.dart';
-import 'package:cookowt/models/extended_profile.dart';
-import 'package:cookowt/models/clients/api_client.dart';
-import 'package:cookowt/models/timeline_event.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../config/default_config.dart';
 import '../app_user.dart';
+import '../block.dart';
+import '../clients/api_client.dart';
+import '../extended_profile.dart';
 import '../like.dart';
+import '../timeline_event.dart';
 
 class ChatController {
   ExtendedProfile? myExtProfile;
-  List<AppUser> profileList = [];
+  // List<AppUser> profileList = [];
   List<Block> myBlockedProfiles = [];
   List<TimelineEvent> timelineOfEvents = [];
 
@@ -22,7 +22,7 @@ class ChatController {
   updateChatController() async {
     myExtProfile = await profileClient
         .getExtendedProfile(FirebaseAuth.instance.currentUser?.uid ?? "");
-    profileList = await profileClient.fetchProfiles();
+    // profileList = await profileClient.fetchProfiles();
     myBlockedProfiles = await profileClient.getMyBlockedProfiles();
     timelineOfEvents = await profileClient.retrieveTimelineEvents();
     return;
@@ -52,7 +52,6 @@ class ChatController {
     var theExtProfile = await profileClient.getExtendedProfile(userId);
 
     myExtProfile = theExtProfile;
-    profileList = await profileClient.fetchProfiles();
     print("theEXT profile $theExtProfile ");
     return theExtProfile;
   }
@@ -61,27 +60,20 @@ class ChatController {
     var theTimelineEvents = await profileClient.retrieveTimelineEvents();
     myBlockedProfiles = await profileClient.getMyBlockedProfiles();
     timelineOfEvents = theTimelineEvents;
-    profileList = await profileClient.fetchProfiles();
     return theTimelineEvents;
-  }
-
-  updateProfiles() async {
-    var aListOfProfiles = await profileClient.fetchProfiles();
-    profileList = aListOfProfiles;
-    return aListOfProfiles;
   }
 
   updateMyBlocks() async {
     List<Block> theNewBlocks = await profileClient.getMyBlockedProfiles();
     myBlockedProfiles = theNewBlocks;
     timelineOfEvents = await profileClient.retrieveTimelineEvents();
-    profileList = await profileClient.fetchProfiles();
+    // profileList = await profileClient.fetchProfiles();
     return theNewBlocks;
   }
 
   Future<AppUser?> fetchHighlightedProfile() async {
     var theProfiles = await profileClient.fetchProfiles();
-    profileList = [...theProfiles];
+    // profileList = [...theProfiles];
 
     theProfiles.removeWhere((element) {
       if (element.profileImage == null) {

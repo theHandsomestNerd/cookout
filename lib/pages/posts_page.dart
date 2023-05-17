@@ -23,17 +23,16 @@ class PostsPage extends StatefulWidget {
 }
 
 class _PostsPageState extends State<PostsPage> {
-  bool isPanelOpen = false;
   PanelController panelController = PanelController();
 
   final PagingController<String, Post> _pagingController =
       PagingController(firstPageKey: "");
 
   // AuthController? authController;
-  late ApiClient client;
+  ApiClient? client;
   AnalyticsController? analyticsController;
 
-  static const _pageSize = 20;
+  static const _pageSize = 25;
   String? lastId = "";
 
   @override
@@ -54,22 +53,17 @@ class _PostsPageState extends State<PostsPage> {
 
   @override
   didChangeDependencies() async {
-    // if(analyticsController == null) {
     var theAnalyticsController = AuthInherited.of(context)?.analyticsController;
     if (theAnalyticsController != null && analyticsController == null) {
       analyticsController = theAnalyticsController;
       setState(() {});
     }
-    // }
-    //
-    // if(client == null) {
     var theClient = AuthInherited.of(context)?.chatController?.profileClient;
 
-    if (theClient != null) {
+    if (client == null && theClient != null) {
       client = theClient;
       setState(() {});
     }
-    // }
 
     super.didChangeDependencies();
   }
@@ -79,11 +73,12 @@ class _PostsPageState extends State<PostsPage> {
   Future<void> _fetchPage(String pageKey) async {
     try {
       List<Post>? newItems;
-      newItems = await client.search(searchTerms,
+      newItems = await client?.search(searchTerms,
           SEARCH_TYPE_ENUM.hashtagRelations, pageKey, _pageSize) as List<Post>;
 
       final isLastPage = (newItems.length) < _pageSize;
       if (isLastPage) {
+        print("Appending last page");
         _pagingController.appendLastPage(newItems);
       } else {
         final nextPageKey = newItems.last.id;
@@ -130,30 +125,35 @@ class _PostsPageState extends State<PostsPage> {
               body: Flex(
                 direction: Axis.vertical,
                 children: [
-                  Flexible(fit:FlexFit.loose, child:
-                  SearchAndList(
-                    searchType: SEARCH_TYPE_ENUM.hashtagRelations,
-                    searchBoxSearchTerms: searchTerms ?? "",
-                    searchBoxSetTerms: (terms) async {
-                      //search hashtags
-                      searchTerms = terms;
-                      _pagingController.refresh();
-                      await _fetchPage(_pagingController.firstPageKey);
-                      // searchResults = await client.searchHashtags(terms, "", 10);
-                    },
-                    isSearchEnabled: true,
-                    listChild: Flex(
-                      direction: Axis.vertical,
-                      children: List.from(hashtagList.map((element) {
-                        return Hashtag_Collection_Block(
-                          collectionSlug: element,
-                        );
-                      }).toList())
-                        ..addAll([
-                          Expanded(child: PostsContent(pagingController: _pagingController))
-                        ]),
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: SearchAndList(
+                      searchType: SEARCH_TYPE_ENUM.hashtagRelations,
+                      searchBoxSearchTerms: searchTerms ?? "",
+                      searchBoxSetTerms: (terms) async {
+                        //search hashtags
+                        searchTerms = terms;
+                        _pagingController.refresh();
+                        await _fetchPage(_pagingController.firstPageKey);
+                        // searchResults = await client.searchHashtags(terms, "", 10);
+                      },
+                      isSearchEnabled: true,
+                      listChild: Flex(
+                        direction: Axis.vertical,
+                        children: List.from(hashtagList.map((element) {
+                          return Hashtag_Collection_Block(
+                            collectionSlug: element,
+                          );
+                        }).toList())
+                          ..addAll([
+                            Expanded(
+                              child: PostsContent(
+                                  pagingController: _pagingController),
+                            ),
+                          ]),
+                      ),
                     ),
-                  ),),
+                  ),
                 ],
               ),
             ),

@@ -5,13 +5,11 @@ import 'package:cookowt/models/controllers/chat_controller.dart';
 import 'package:cookowt/models/controllers/geolocation_controller.dart';
 import 'package:cookowt/models/extended_profile.dart';
 import 'package:cookowt/models/post.dart';
-import 'package:cookowt/pages/splash_screen.dart';
 import 'package:cookowt/sanity/sanity_image_builder.dart';
 import 'package:cookowt/shared_components/loading_logo.dart';
 import 'package:cookowt/shared_components/menus/home_page_menu.dart';
 import 'package:cookowt/wrappers/app_scaffold_wrapper.dart';
 import 'package:cookowt/wrappers/card_with_actions.dart';
-import 'package:cookowt/wrappers/circular_progress_indicator_with_message.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -234,7 +232,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
   @override
   void initState() {
-    // TODO: implement initState
     startHomeScreenTimers();
 
     _profilePagingController.addPageRequestListener((theLastId) async {
@@ -252,47 +249,47 @@ class _HomePageState extends State<HomePage> with RouteAware {
     super.initState();
   }
 
-  @override
-  void didPushNext() {
-    if (kDebugMode) {
-      print("router status: didPushnext");
-    }
-    cancelHomeScreenTimers();
-    super.didPushNext();
-  }
-
-  @override
-  void didPush() {
-    if (kDebugMode) {
-      print("router status: didPush");
-    }
-    super.didPush();
-
-    startHomeScreenTimers();
-  }
+  // @override
+  // void didPushNext() {
+  //   if (kDebugMode) {
+  //     print("router status: didPushnext");
+  //   }
+  //   cancelHomeScreenTimers();
+  //   super.didPushNext();
+  // }
+  //
+  // @override
+  // void didPush() {
+  //   if (kDebugMode) {
+  //     print("router status: didPush");
+  //   }
+  //   super.didPush();
+  //
+  //   startHomeScreenTimers();
+  // }
 
   cancelHomeScreenTimers() {
     _postTimer?.cancel();
     _profileTimer?.cancel();
   }
 
-  @override
-  void didPopNext() {
-    if (kDebugMode) {
-      print("router status: didPopnext");
-    }
-    super.didPopNext();
-    startHomeScreenTimers();
-  }
-
-  @override
-  void didPop() async {
-    if (kDebugMode) {
-      print("router status: didPop");
-    }
-    cancelHomeScreenTimers();
-    super.didPop();
-  }
+  // @override
+  // void didPopNext() {
+  //   if (kDebugMode) {
+  //     print("router status: didPopnext");
+  //   }
+  //   super.didPopNext();
+  //   startHomeScreenTimers();
+  // }
+  //
+  // @override
+  // void didPop() async {
+  //   if (kDebugMode) {
+  //     print("router status: didPop");
+  //   }
+  //   cancelHomeScreenTimers();
+  //   super.didPop();
+  // }
 
   @override
   void dispose() async {
@@ -315,13 +312,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
   @override
   didChangeDependencies() async {
-    // startHomeScreenTimers();
-
-    // _postPagingController
-    //     .notifyPageRequestListeners("");
-    // _profilePagingController
-    //     .notifyPageRequestListeners("");
-
     routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
 
     var theAuthController = AuthInherited.of(context)?.authController;
@@ -330,14 +320,16 @@ class _HomePageState extends State<HomePage> with RouteAware {
     AnalyticsController? theAnalyticsController =
         AuthInherited.of(context)?.analyticsController;
     var theClient = AuthInherited.of(context)?.chatController?.profileClient;
-    if (theClient != null) {
+    if (client == null && theClient != null) {
       client = theClient;
     }
-
-    theAnalyticsController?.logScreenView('Home');
+    if (client == null && theChatController?.profileClient != null) {
+      client = theChatController?.profileClient;
+    }
 
     if (analyticsController == null && theAnalyticsController != null) {
       analyticsController = theAnalyticsController;
+      theAnalyticsController.logScreenView('Home');
     }
 
     if (chatController == null && theChatController != null) {
@@ -348,53 +340,12 @@ class _HomePageState extends State<HomePage> with RouteAware {
     }
     isUserLoggedIn = theAuthController?.isLoggedIn ?? false;
 
-    // if (isProfileLoading != true && highlightedProfile == null) {
-    //   setState(() {
-    //     isProfileLoading = true;
-    //   });
-    //   await theChatController
-    //       ?.fetchHighlightedProfile()
-    //       .then((theProfile) async {
-    //     await analyticsController?.sendAnalyticsEvent(
-    //         'highlighted-profile', {"user_id": theProfile?.userId});
-    //
-    //     setState(() {
-    //       highlightedProfile = theProfile;
-    //       isProfileLoading = false;
-    //     });
-    //   });
-    // }
-
-    // if (isExtProfileLoading != true && highlightedExtProfile == null) {
-    //   setState(() {
-    //     isExtProfileLoading = true;
-    //   });
-    //   await theChatController?.profileClient
-    //       .getExtendedProfile(highlightedProfile?.userId ?? "")
-    //       .then((theProfile) {
-    //     setState(() {
-    //       highlightedExtProfile = theProfile;
-    //       isExtProfileLoading = false;
-    //     });
-    //   });
-    // }
-    // _postPageController.nextPage(
-    //     duration: Duration(milliseconds: 500), curve: ElasticInCurve());
-    // _profilePageController.nextPage(
-    //     duration: Duration(milliseconds: 500), curve: ElasticInCurve());
     setState(() {});
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-
     return AppScaffoldWrapper(
       floatingActionMenu: HomePageMenu(
         updateMenu: () => {},

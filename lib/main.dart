@@ -128,12 +128,10 @@ class _MyAppState extends State<MyApp> {
       ),
       GoRoute(
           path: '/home',
-          builder: (BuildContext context, GoRouterState state) =>
-              HomePage()),
+          builder: (BuildContext context, GoRouterState state) => HomePage()),
       GoRoute(
           path: '/postsPage',
-          builder: (BuildContext context, GoRouterState state) =>
-              PostsPage()),
+          builder: (BuildContext context, GoRouterState state) => PostsPage()),
       // GoRoute(
       //     path: '/createPostsPage',
       //     builder: (BuildContext context, GoRouterState state) =>
@@ -172,18 +170,18 @@ class _MyAppState extends State<MyApp> {
                 thisHashtagId: state.pathParameters["id"],
               )),
 
-    GoRoute(
+      GoRoute(
           path: '/chapterRoster',
           builder: (BuildContext context, GoRouterState state) =>
               const ChapterRosterPage()),
     ],
   );
 
-  late AuthController authController = AuthController.init();
-  late ChatController chatController = ChatController.init();
-  late PostController postController = PostController.init();
-  late AnalyticsController analyticsController = AnalyticsController.init();
-  late GeolocationController geolocationController = GeolocationController();
+  AuthController authController = AuthController.init();
+  ChatController chatController = ChatController.init();
+  PostController postController = PostController.init();
+  AnalyticsController analyticsController = AnalyticsController.init();
+  GeolocationController geolocationController = GeolocationController();
 
   // var myExtProfile = null;
 
@@ -225,13 +223,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void didChangeDependencies() async {
-    // TODO: implement didChangeDependencies
-
-    // var intermediate =
-    //     AuthInherited.of(context)?.authController?.isLoggedIn ?? false;
-    //
-    // isUserLoggedIn = intermediate;
-
     var theAppVersion = DefaultConfig.version;
 
     appName = DefaultConfig.appName;
@@ -270,109 +261,7 @@ class _MyAppState extends State<MyApp> {
         routeInformationProvider: router.routeInformationProvider,
         routeInformationParser: router.routeInformationParser,
         routerDelegate: router.routerDelegate,
-        // key: ObjectKey(isUserLoggedIn),
-        // navigatorObservers: <NavigatorObserver>[routeObserver],
         title: 'Cookowt',
-        // routes: {
-        //   '/home': (context) {
-        //     return const HomePage();
-        //   },
-        //   '/postsPage': (context) => const PostsPage(),
-        //   '/createPostsPage': (context) =>
-        //       const BugReporter(child: CreatePostPage()),
-        //   '/register': (context) => const RegisterPage(),
-        //   '/': (context) {
-        //     if (kIsWeb) {
-        //       // Define MetaSEO object
-        //       MetaSEO meta = MetaSEO();
-        //       // add meta seo data for web app as you want
-        //       var title = 'Kookout-The Invite Only Network';
-        //       var image =
-        //           "https://cdn.sanity.io/images/dhhk6mar/production/ae5b21a6e5982153e74ca8a815b90f92368ac9fa-3125x1875.png";
-        //       var description =
-        //           'Kookout is the next invite only social media app. Invite only means real users unless they are admitted by someone already at the Kookout. You will be able to link to other Social media to enable cross posting for those not invited. Want the invite? tweet @Kookoutinvitee';
-        //       meta.ogTitle(ogTitle: title);
-        //       meta.description(description: description);
-        //       meta.keywords(keywords: 'social media, black twitter, memes');
-        //       meta.twitterCard(twitterCard: TwitterCard.summaryLargeImage);
-        //       meta.author(author: "The Handsomest Nerd");
-        //       meta.twitterDescription(twitterDescription: description);
-        //       meta.twitterImage(twitterImage: image);
-        //       meta.twitterTitle(twitterTitle: title);
-        //       meta.ogImage(ogImage: image);
-        //     }
-        //     return const LoginPage();
-        //   },
-        //   // '/editProfile': (context) => const EditProfilePage(),
-        //   '/logout': (context) => const LogoutPage(),
-        //   '/profilesPage': (context) => const ProfilesPage(),
-        //   '/profile': (context) {
-        //     var arguments = (ModalRoute.of(context)?.settings.arguments ??
-        //         <String, dynamic>{}) as Map;
-        //
-        //     String theId;
-        //     if (arguments['id'] != null) {
-        //       theId = arguments['id'];
-        //     } else {
-        //       theId = authController.myAppUser?.userId.toString() ?? "";
-        //     }
-        //
-        //     AppUser? thisProfile;
-        //     for (var element in chatController.profileList) {
-        //       if (element.userId == theId) {
-        //         thisProfile = element;
-        //       }
-        //     }
-        //
-        //     return SoloProfilePage(
-        //       thisProfile: thisProfile,
-        //       key: ObjectKey(arguments["id"]),
-        //       id: theId,
-        //     );
-        //   },
-        //   '/post': (context) {
-        //     var arguments = (ModalRoute.of(context)?.settings.arguments ??
-        //         <String, dynamic>{}) as Map;
-        //
-        //     String? theId;
-        //     if (arguments['id'] != null) {
-        //       theId = arguments['id'];
-        //     }
-        //
-        //     // var thisPost;
-        //     // if (theId != null) {
-        //     //    postController.getPost(theId).then((value){
-        //     //     print("Post retrieved before ");
-        //
-        //     return SoloPostPage(
-        //       thisPostId: theId,
-        //     );
-        //
-        //     // }
-        //     // return Placeholder();
-        //   },
-        //   '/myProfile': (context) {
-        //     String theId = authController.myAppUser?.userId.toString() ?? "";
-        //     AppUser? thisProfile;
-        //     for (var element in chatController.profileList) {
-        //       if (element.userId == theId) {
-        //         thisProfile = element;
-        //       }
-        //     }
-        //     return SoloProfilePage(
-        //       thisProfile: thisProfile,
-        //       id: theId,
-        //     );
-        //   },
-        //   // '/postsPage': (context) {
-        //   //   return PostsThreadPage(
-        //   //     drawer: widget.drawer,
-        //   //   );
-        //   // },
-        //   '/settings': (context) {
-        //     return const SettingsPage();
-        //   },
-        // },
         theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(
             primarySwatch: Colors.red,
