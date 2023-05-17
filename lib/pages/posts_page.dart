@@ -1,28 +1,28 @@
-import 'package:cookowt/layout/search_and_list.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import '../layout/search_and_list.dart';
 import '../models/clients/api_client.dart';
 import '../models/controllers/analytics_controller.dart';
 import '../models/controllers/auth_inherited.dart';
 import '../models/post.dart';
+import '../shared_components/bug_reporter/bug_reporter.dart';
 import '../shared_components/menus/home_page_menu.dart';
-import '../shared_components/search_box.dart';
-import '../wrappers/app_scaffold_wrapper.dart';
 import '../wrappers/hashtag_collection.dart';
 import 'posts_content.dart';
 import 'search_type_enum.dart';
 
-class HashtagLibraryPage extends StatefulWidget {
-  const HashtagLibraryPage({
+class PostsPage extends StatefulWidget {
+  const PostsPage({
     super.key,
   });
 
   @override
-  State<HashtagLibraryPage> createState() => _HashtagLibraryPageState();
+  State<PostsPage> createState() => _PostsPageState();
 }
 
-class _HashtagLibraryPageState extends State<HashtagLibraryPage> {
+class _PostsPageState extends State<PostsPage> {
   bool isPanelOpen = false;
   PanelController panelController = PanelController();
 
@@ -111,33 +111,54 @@ class _HashtagLibraryPageState extends State<HashtagLibraryPage> {
       "popular",
     ];
 
-    return AppScaffoldWrapper(
-      key: widget.key,
-      floatingActionMenu: HomePageMenu(
-        updateMenu: () {},
-      ),
-      child: SearchAndList(
-        searchType: SEARCH_TYPE_ENUM.hashtagRelations,
-        searchBoxSearchTerms: searchTerms ?? "",
-        searchBoxSetTerms: (terms) async {
-          //search hashtags
-          searchTerms = terms;
-          _pagingController.refresh();
-          await _fetchPage(_pagingController.firstPageKey);
-          // searchResults = await client.searchHashtags(terms, "", 10);
-        },
-        isSearchEnabled: true,
-        listChild: Flex(
-          direction: Axis.vertical,
-          children: List.from(hashtagList.map((element) {
-            return Hashtag_Collection_Block(
-              collectionSlug: element,
-            );
-          }).toList())
-            ..addAll([
-              Expanded(child: PostsContent(pagingController: _pagingController))
-            ]),
-        ),
+    return BugReporter(
+      child: Flex(
+        direction: Axis.vertical,
+        children: [
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
+            child: Scaffold(
+              resizeToAvoidBottomInset: true,
+              floatingActionButton: HomePageMenu(
+                updateMenu: () {},
+              ),
+              // appBar: AppBar(
+              //   backgroundColor: Colors.white.withOpacity(0.5),
+              //   title: const Logo(),
+              // ),
+              body: Flex(
+                direction: Axis.vertical,
+                children: [
+                  Flexible(fit:FlexFit.loose, child:
+                  SearchAndList(
+                    searchType: SEARCH_TYPE_ENUM.hashtagRelations,
+                    searchBoxSearchTerms: searchTerms ?? "",
+                    searchBoxSetTerms: (terms) async {
+                      //search hashtags
+                      searchTerms = terms;
+                      _pagingController.refresh();
+                      await _fetchPage(_pagingController.firstPageKey);
+                      // searchResults = await client.searchHashtags(terms, "", 10);
+                    },
+                    isSearchEnabled: true,
+                    listChild: Flex(
+                      direction: Axis.vertical,
+                      children: List.from(hashtagList.map((element) {
+                        return Hashtag_Collection_Block(
+                          collectionSlug: element,
+                        );
+                      }).toList())
+                        ..addAll([
+                          Expanded(child: PostsContent(pagingController: _pagingController))
+                        ]),
+                    ),
+                  ),),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,15 +1,15 @@
-import 'package:cookowt/models/controllers/chat_controller.dart';
-import 'package:cookowt/pages/tabs/blocks_tab.dart';
-import 'package:cookowt/pages/tabs/profile_list_tab.dart';
-import 'package:cookowt/pages/tabs/timeline_events_tab.dart';
-import 'package:cookowt/shared_components/menus/profile_page_menu.dart';
-import 'package:cookowt/wrappers/app_scaffold_wrapper.dart';
 import 'package:flutter/material.dart';
 
 import '../models/block.dart';
 import '../models/controllers/analytics_controller.dart';
 import '../models/controllers/auth_controller.dart';
 import '../models/controllers/auth_inherited.dart';
+import '../models/controllers/chat_controller.dart';
+import '../shared_components/bug_reporter/bug_reporter.dart';
+import '../shared_components/menus/profile_page_menu.dart';
+import 'tabs/blocks_tab.dart';
+import 'tabs/profile_list_tab.dart';
+import 'tabs/timeline_events_tab.dart';
 
 class ProfilesPage extends StatefulWidget {
   const ProfilesPage({
@@ -43,11 +43,11 @@ class _ProfilesPageState extends State<ProfilesPage> {
     AnalyticsController? theAnalyticsController =
         AuthInherited.of(context)?.analyticsController;
 
-    if(analyticsController == null && theAnalyticsController != null) {
-    await theAnalyticsController.logScreenView('profiles-page');
+    if (analyticsController == null && theAnalyticsController != null) {
+      await theAnalyticsController.logScreenView('profiles-page');
       analyticsController = theAnalyticsController;
     }
-    if(authController == null && theAuthController != null) {
+    if (authController == null && theAuthController != null) {
       authController = authController;
     }
     chatController = theChatController;
@@ -64,8 +64,7 @@ class _ProfilesPageState extends State<ProfilesPage> {
       const ProfileListTab(),
       TimelineEventsTab(
           timelineEvents: chatController?.timelineOfEvents,
-          id: authController?.myAppUser?.userId ??
-              ""),
+          id: authController?.myAppUser?.userId ?? ""),
       const Text(
         'Index 3: Likes and Follows',
         style: optionStyle,
@@ -73,7 +72,8 @@ class _ProfilesPageState extends State<ProfilesPage> {
       BlocksTab(
         blocks: myBlockedProfiles ?? [],
         unblockProfile: (context) async {
-          await analyticsController?.sendAnalyticsEvent('profile-unblock',{"unblocker": authController?.myAppUser?.userId});
+          await analyticsController?.sendAnalyticsEvent('profile-unblock',
+              {"unblocker": authController?.myAppUser?.userId});
 
           myBlockedProfiles = await chatController?.updateMyBlocks();
           setState(() {});
@@ -93,12 +93,41 @@ class _ProfilesPageState extends State<ProfilesPage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
-    return AppScaffoldWrapper(
-      floatingActionMenu: ProfilePageMenu(),
-      child: ConstrainedBox(
-          constraints: const BoxConstraints(),
-          child: _widgetOptions(
-              _selectedIndex)), // This trailing comma makes auto-formatting nicer for build methods.
+    return BugReporter(
+      child: Flex(
+        direction: Axis.vertical,
+        children: [
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
+            child: Scaffold(
+              resizeToAvoidBottomInset: true,
+              floatingActionButton: ProfilePageMenu(),
+              // appBar: AppBar(
+              //   backgroundColor: Colors.white.withOpacity(0.5),
+              //   title: const Logo(),
+              // ),
+              body: Flex(
+                direction: Axis.vertical,
+                children: [
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(),
+                      child: _widgetOptions(_selectedIndex),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+
+    // return ConstrainedBox(
+    //     constraints: const BoxConstraints(),
+    //     child: _widgetOptions(
+    //         _selectedIndex));
   }
 }

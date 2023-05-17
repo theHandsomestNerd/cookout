@@ -13,7 +13,7 @@ import 'package:cookowt/models/controllers/chat_controller.dart';
 import 'package:cookowt/models/controllers/geolocation_controller.dart';
 import 'package:cookowt/models/controllers/post_controller.dart';
 import 'package:cookowt/pages/chapter_roster_page.dart';
-import 'package:cookowt/pages/hashtag_library_page.dart';
+import 'package:cookowt/pages/posts_page.dart';
 import 'package:cookowt/pages/hashtag_page.dart';
 import 'package:cookowt/pages/home_page.dart';
 import 'package:cookowt/pages/logout_page.dart';
@@ -133,7 +133,7 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
           path: '/postsPage',
           builder: (BuildContext context, GoRouterState state) =>
-              HashtagLibraryPage()),
+              PostsPage()),
       // GoRoute(
       //     path: '/createPostsPage',
       //     builder: (BuildContext context, GoRouterState state) =>

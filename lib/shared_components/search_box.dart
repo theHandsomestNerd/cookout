@@ -9,6 +9,7 @@ import '../models/clients/api_client.dart';
 import '../models/controllers/auth_inherited.dart';
 import '../models/hash_tag.dart';
 import '../pages/search_type_enum.dart';
+import 'logo.dart';
 
 class SearchBox extends StatefulWidget {
   const SearchBox(
@@ -68,7 +69,7 @@ class _SearchBoxState extends State<SearchBox> {
     super.didChangeDependencies();
   }
 
-  List<String> _hashtagSuggestions = [];
+  List<String> _suggestions = [];
 
   _getHashtagSuggestions(terms) async {
     switch (widget.searchType) {
@@ -79,16 +80,16 @@ class _SearchBoxState extends State<SearchBox> {
           return suggestedHashtag.displayName ?? "";
         }).toList();
 
-        _hashtagSuggestions = theSuggestions;
+        _suggestions = theSuggestions;
         setState(() {});
         return theSuggestions;
       case SEARCH_TYPE_ENUM.hashtagRelations:
         List<String> theSuggestions = (await client?.search(
-            terms, SEARCH_TYPE_ENUM.hashtags, "", 500) as List<Hashtag>)
+                terms, SEARCH_TYPE_ENUM.hashtags, "", 500) as List<Hashtag>)
             .map((Hashtag suggestedHashtag) {
           return suggestedHashtag.tag ?? "";
         }).toList();
-        _hashtagSuggestions = theSuggestions;
+        _suggestions = theSuggestions;
         setState(() {});
         return theSuggestions;
         break;
@@ -101,11 +102,19 @@ class _SearchBoxState extends State<SearchBox> {
   @override
   Widget build(BuildContext context) {
     return EasySearchBar(
-        title: const Text('Search'),
-        onSearch: (value) {
-          return setTerms(value);
-          // return [''];
-        },
-        suggestions: _hashtagSuggestions);
+      backgroundColor: Colors.white.withOpacity(.80),
+      title: Row(
+        children: [
+          Logo(
+            disableLink: false,
+          ),
+        ],
+      ),
+      onSearch: (value) {
+        return setTerms(value);
+        // return [''];
+      },
+      suggestions: _suggestions,
+    );
   }
 }
