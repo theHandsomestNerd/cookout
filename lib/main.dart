@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cookowt/pages/posts_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -13,7 +14,7 @@ import 'package:cookowt/models/controllers/chat_controller.dart';
 import 'package:cookowt/models/controllers/geolocation_controller.dart';
 import 'package:cookowt/models/controllers/post_controller.dart';
 import 'package:cookowt/pages/chapter_roster_page.dart';
-import 'package:cookowt/pages/posts_page.dart';
+import 'package:cookowt/pages/hashtag_library_page.dart';
 import 'package:cookowt/pages/hashtag_page.dart';
 import 'package:cookowt/pages/home_page.dart';
 import 'package:cookowt/pages/logout_page.dart';
@@ -132,6 +133,9 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
           path: '/postsPage',
           builder: (BuildContext context, GoRouterState state) => PostsPage()),
+      GoRoute(
+          path: '/hashtagCollections',
+          builder: (BuildContext context, GoRouterState state) => HashtagLibraryPage()),
       // GoRoute(
       //     path: '/createPostsPage',
       //     builder: (BuildContext context, GoRouterState state) =>

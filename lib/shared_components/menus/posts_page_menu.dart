@@ -68,13 +68,13 @@ class _PostsPageMenuState extends State<PostsPageMenu> {
         //         )
         //       : const Icon(Icons.add),
         // ),
-        // ActionButton(
-        //   tooltip: "Hashtags",
-        //   onPressed: () {
-        //     GoRouter.of(context).go('/hashtagCollections');
-        //   },
-        //   icon: const Icon(Icons.tag),
-        // ),
+        ActionButton(
+          tooltip: "Hashtags",
+          onPressed: () {
+            GoRouter.of(context).go('/hashtagCollections');
+          },
+          icon: const Icon(Icons.tag),
+        ),
         // ActionButton(
         //   tooltip: "Chapter Roster",
         //   onPressed: () {
